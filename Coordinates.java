@@ -4,8 +4,8 @@
 
 public class Coordinates {
 
-    int row, col;
-    
+    private int row, col;
+
     Coordinates(int x, int y) {
         col = x;
         row = y;

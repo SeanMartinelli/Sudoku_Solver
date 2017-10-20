@@ -7,9 +7,9 @@ import java.awt.*;
 public class SudokuSolverView
 {
 
-    JButton[] buttonArray;
-    JButton[] optionPanelButtons;
-    JPanel[] subGridArray;
+    private JButton[] buttonArray;
+    private JButton[] optionPanelButtons;
+    private JPanel[] subGridArray;
 
     SudokuSolverView()
     {
