@@ -3,4 +3,15 @@
  */
 public class SudokuSolverController {
 
+    private SudokuSolverView view;
+    private SudokuSolverModel model;
+
+
+    SudokuSolverController(SudokuSolverModel m, SudokuSolverView v) {
+        model = m;
+        view = v;
+    }
+
+
+
 }
