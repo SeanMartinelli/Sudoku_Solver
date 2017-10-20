@@ -4,4 +4,5 @@
 public class SudokuSolverController {
     int lol2;
     int lol3;
+    int lol4;
 }
