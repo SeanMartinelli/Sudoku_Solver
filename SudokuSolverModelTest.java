@@ -6,10 +6,14 @@
 NOTES:
     If '@Test" specifier is not found:
         1. place cursor on it   2. alt + enter  3. add JUnit4
+
+     Todo:
+        - test solved board
  */
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SudokuSolverModelTest {
@@ -102,6 +106,7 @@ public class SudokuSolverModelTest {
     }
 
     @Test
+    //FIXME: not every button in box tested with 'assert'
     void testRemoveCandidateInBox() {
         testModel.initializeCandidatesToDefault();
         System.out.println("Before removing:");
@@ -111,7 +116,7 @@ public class SudokuSolverModelTest {
         System.out.println("After removing:");
         testModel.listCandidates();
 
-
+        assert testModel.getCandidates()[4][4][3-1] == 0;
     }
 
     @Test
@@ -128,5 +133,18 @@ public class SudokuSolverModelTest {
             assert testModel.getCandidates()[3][5][i] == 0;
     }
 
+    @Test
+    void testGameComplete() {
+        testModel.initializeBoardToZeros();
+
+        assert testModel.gameComplete() == false;
+    }
+
+    @Test
+    void testCorrectPiecesArrangement() {
+        testModel.initializeBoardToZeros();
+
+        assert testModel.correctPiecesArrangement() == false;
+    }
 
 }
