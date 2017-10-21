@@ -22,8 +22,8 @@ public class SudokuSolverModel {
         board = new int[9][9];
         candidates = new int[9][9][9];
         piecesOnBoard = 0;
-        inititializeBoardToZeros();
-        inititializeCandidatesToDefault();
+        initializeBoardToZeros();
+        initializeCandidatesToDefault();
     }
 
     public int[][] getBoard() {
@@ -54,14 +54,14 @@ public class SudokuSolverModel {
         this.candidates = candidates;
     }
 
-    public void inititializeBoardToZeros() {
+    public void initializeBoardToZeros() {
         for (int n[]: board) {
             for (int a: n)
                 a = 0;
         }
     }
 
-    public void inititializeCandidatesToDefault() {
+    public void initializeCandidatesToDefault() {
         for (int[][] col: candidates) {
             for (int[] row: col) {
                 for (int i = 0; i < 9; ++i)
@@ -187,4 +187,98 @@ public class SudokuSolverModel {
 
         return new Coordinates(x, y);
     }
-}
+
+    public  int[][] singleAlgorithm() {
+        for (int i = 0; i < 9; ++i) {
+            for (int k = 0; k < 9; ++k) {
+                if (board[i][k] == 0) {
+                    List<Integer> tempList = getCandidatesAt(new Coordinates(i, k));
+                    if (tempList.size() == 1) {
+                        updatePiece(new Coordinates(i, k), tempList.get(0), true);
+                        return board;
+                    }
+                }
+            }
+        }
+        return null;        // to display message about failure
+    }
+
+    public int[][] hiddenSingleAlgorithm() {
+        Coordinates tempCoords = new Coordinates(-1, -1);
+        for (int i = 0; i < 9; ++i) {
+            for (int k = 0; k < 9; ++k) {
+                if (board[i][k] == 0) {
+                    tempCoords.setColAndRow(i, k);
+                    List<Integer> tempCand = getCandidatesAt(tempCoords);
+                    if (tempCand.size() > 1) {
+                        for (int cand : tempCand) {
+                            if (isHiddenSingle(cand, tempCoords)) {
+                                updatePiece(new Coordinates(i, k), cand, true);
+                                return board;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return null;        // to display message about failure
+    }
+
+    public boolean isHiddenSingle(int cand, Coordinates coords) {
+        if (hiddenInCol(cand, coords))
+            return true;
+        else if (hiddenInRow(cand, coords))
+            return true;
+        else if (hiddenInBox(cand, coords))
+            return true;
+        else
+            return false;
+    }
+
+    public boolean hiddenInCol(int cand, Coordinates c) {
+        int col = c.getCol();
+        for (int i = 0; i < 9; ++i) {
+            if (board[col][i] == 0) {
+                if (getCandidatesAt(new Coordinates(col, i)).contains(cand))
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean hiddenInRow(int cand, Coordinates c) {
+        int row = c.getRow();
+        for (int i = 0; i < 9; ++i) {
+            if (board[i][row] == 0) {
+                if (getCandidatesAt(new Coordinates(i, row)).contains(cand))
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean hiddenInBox(int cand, Coordinates c) {
+        Coordinates tempCoords = findTopLeftOfTheBox(c);
+
+        int col = tempCoords.getCol();
+        int row = tempCoords.getRow();
+
+        for (int i = col; i < col + 3; ++i) {
+            for (int k = row; k < row + 3; ++i) {
+                if (board[i][k] == 0) {
+                    if (getCandidatesAt(new Coordinates(i, k)).contains(cand))
+                        return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public boolean lockedCandidateAlgorithm() {
+
+        return true;
+    }
+
+
+
+}   // end of SudokuSolverModel class

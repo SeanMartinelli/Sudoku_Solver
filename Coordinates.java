@@ -28,4 +28,9 @@ public class Coordinates {
         this.col = col;
     }
 
+    public void setColAndRow(int x, int y) {
+        col = x;
+        row = y;
+    }
+
 }

@@ -18,7 +18,7 @@ public class SudokuSolverModelTest {
 
     @Test
     void testInitializedToZero() {
-        testModel.inititializeBoardToZeros();
+        testModel.initializeBoardToZeros();
         for (int n[]: testModel.getBoard()) {
             for (int a: n) {
                 assert a == 0;
@@ -27,8 +27,8 @@ public class SudokuSolverModelTest {
     }
 
     @Test
-    void testInititializeCandidatesToDefault() {
-        testModel.inititializeCandidatesToDefault();
+    void testInitializeCandidatesToDefault() {
+        testModel.initializeCandidatesToDefault();
         for (int[][] col: testModel.getCandidates()) {
             for (int[] row: col) {
                 for (int i = 0; i < 9; ++i) {
@@ -40,7 +40,7 @@ public class SudokuSolverModelTest {
 
     @Test
     void testGetCandidatesAt() {
-        testModel.inititializeCandidatesToDefault();
+        testModel.initializeCandidatesToDefault();
         List<Integer> cand = testModel.getCandidatesAt(new Coordinates(0,0));
         for (int i = 0; i < 9; ++i)
             assert cand.get(i) == i +1;
@@ -58,7 +58,7 @@ public class SudokuSolverModelTest {
 
     @Test
     void testSpotTaken() {
-        testModel.inititializeBoardToZeros();
+        testModel.initializeBoardToZeros();
         for (int i = 0; i <9; ++i) {
             for (int k = 0; k <9; ++k)
                 assert testModel.spotTaken(new Coordinates(i, k)) == false;
@@ -67,13 +67,13 @@ public class SudokuSolverModelTest {
 
     @Test
     void testListCandidates() {
-        testModel.inititializeCandidatesToDefault();
+        testModel.initializeCandidatesToDefault();
         testModel.listCandidates();
     }
 
     @Test
     void testRemoveCandidateInRow() {
-        testModel.inititializeCandidatesToDefault();
+        testModel.initializeCandidatesToDefault();
         System.out.println("Before removing:");
         testModel.listCandidates();
         testModel.removeCandidateInRow(new Coordinates(3,5), 6);
@@ -88,7 +88,7 @@ public class SudokuSolverModelTest {
 
     @Test
     void testRemoveCandidateInCol() {
-        testModel.inititializeCandidatesToDefault();
+        testModel.initializeCandidatesToDefault();
         System.out.println("Before removing:");
         testModel.listCandidates();
         testModel.removeCandidateInCol(new Coordinates(3,5), 6);
@@ -103,7 +103,7 @@ public class SudokuSolverModelTest {
 
     @Test
     void testRemoveCandidateInBox() {
-        testModel.inititializeCandidatesToDefault();
+        testModel.initializeCandidatesToDefault();
         System.out.println("Before removing:");
         testModel.listCandidates();
         testModel.removeCandidateInBox(new Coordinates(5,5), 3);
@@ -116,7 +116,7 @@ public class SudokuSolverModelTest {
 
     @Test
     void testClearCandidatesAt() {
-        testModel.inititializeCandidatesToDefault();
+        testModel.initializeCandidatesToDefault();
         System.out.println("Before clear:");
         testModel.listCandidates();
         testModel.clearCandidatesAt(new Coordinates(3,5));
