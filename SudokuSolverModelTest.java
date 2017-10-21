@@ -44,6 +44,7 @@ public class SudokuSolverModelTest {
         List<Integer> cand = testModel.getCandidatesAt(new Coordinates(0,0));
         for (int i = 0; i < 9; ++i)
             assert cand.get(i) == i +1;
+        assert cand.size() == 9;
     }
 
     @Test
@@ -63,5 +64,69 @@ public class SudokuSolverModelTest {
                 assert testModel.spotTaken(new Coordinates(i, k)) == false;
         }
     }
+
+    @Test
+    void testListCandidates() {
+        testModel.inititializeCandidatesToDefault();
+        testModel.listCandidates();
+    }
+
+    @Test
+    void testRemoveCandidateInRow() {
+        testModel.inititializeCandidatesToDefault();
+        System.out.println("Before removing:");
+        testModel.listCandidates();
+        testModel.removeCandidateInRow(new Coordinates(3,5), 6);
+        System.out.println();
+        System.out.println("After removing:");
+        testModel.listCandidates();
+
+        for (int i = 0; i < 9; ++i) {
+            assert testModel.getCandidates()[i][5][6 - 1] == 0;
+        }
+    }
+
+    @Test
+    void testRemoveCandidateInCol() {
+        testModel.inititializeCandidatesToDefault();
+        System.out.println("Before removing:");
+        testModel.listCandidates();
+        testModel.removeCandidateInCol(new Coordinates(3,5), 6);
+        System.out.println();
+        System.out.println("After removing:");
+        testModel.listCandidates();
+
+        for (int i = 0; i < 9; ++i) {
+            assert testModel.getCandidates()[3][i][6 - 1] == 0;
+        }
+    }
+
+    @Test
+    void testRemoveCandidateInBox() {
+        testModel.inititializeCandidatesToDefault();
+        System.out.println("Before removing:");
+        testModel.listCandidates();
+        testModel.removeCandidateInBox(new Coordinates(5,5), 3);
+        System.out.println();
+        System.out.println("After removing:");
+        testModel.listCandidates();
+
+
+    }
+
+    @Test
+    void testClearCandidatesAt() {
+        testModel.inititializeCandidatesToDefault();
+        System.out.println("Before clear:");
+        testModel.listCandidates();
+        testModel.clearCandidatesAt(new Coordinates(3,5));
+        System.out.println();
+        System.out.println("After clear:");
+        testModel.listCandidates();
+
+        for (int i = 0; i < 9; ++i)
+            assert testModel.getCandidates()[3][5][i] == 0;
+    }
+
 
 }

@@ -4,8 +4,6 @@
 
 /*
 NOTES:
-    - If '@Test" specifier is not found:
-        1. place cursor on it   2. alt + enter  3. add JUnit4
     - candidates as 3D array for now, 2D List<...> is kind of tricky to implement here
  */
 
@@ -77,12 +75,12 @@ public class SudokuSolverModel {
             return false;
         else if (!checkOnFill) {
             board[coords.getCol()][coords.getRow()] = num;
-            updateCandidateList(coords);
+            updateCandidateList(coords, num);
             return true;
         }
-        else if (onCandidateList(coords)) {
+        else if (onCandidateList(coords, num)) {
             board[coords.getCol()][coords.getRow()] = num;
-            updateCandidateList(coords);
+            updateCandidateList(coords, num);
             return true;
         }
         return false;
@@ -96,7 +94,7 @@ public class SudokuSolverModel {
         return board[coords.getCol()][coords.getRow()] != 0;
     }
 
-    public boolean removePiece() {
+    public boolean removePiece(Coordinates coords) {
 
         return true;
     }
@@ -105,13 +103,18 @@ public class SudokuSolverModel {
         return piecesOnBoard == 81 && correctPiecesArrangement();
     }
 
-    public void updateCandidateList(Coordinates coords) {
+    public void updateCandidateList(Coordinates coords, int num) {
+        clearCandidatesAt(coords);
+        removeCandidateInCol(coords, num);
+        removeCandidateInRow(coords, num);
+        removeCandidateInBox(coords, num);
 
+        // debug
+        listCandidates();
     }
 
-    public boolean onCandidateList(Coordinates coords) {
-
-        return true;
+    public boolean onCandidateList(Coordinates coords, int number) {
+        return getCandidatesAt(coords).contains(number);
     }
 
     public boolean correctPiecesArrangement() {
@@ -119,4 +122,69 @@ public class SudokuSolverModel {
         return true;
     }
 
+    public void listCandidates() {
+        for (int i = 0; i < 9; ++i) {
+            for (int k = 0; k < 9; ++k) {
+                System.out.print("[" + i + "," + k + "]    ");
+                for (int m = 0; m < 9; ++m) {
+                    System.out.print(candidates[i][k][m] + " ");
+                }
+                System.out.println();
+            }
+        }
+    }
+
+    public void clearCandidatesAt(Coordinates c) {
+        int x = c.getCol();
+        int y = c.getRow();
+        for (int i = 0; i < 9; ++i)
+            candidates[x][y][i] = 0;
+    }
+
+    public void removeCandidateInRow(Coordinates c, int n) {
+        int y = c.getRow();
+        for (int i = 0; i < 9; ++i) {
+            candidates[i][y][n - 1] = 0;
+        }
+    }
+
+    public void removeCandidateInCol(Coordinates c, int n) {
+        int x = c.getCol();
+        for (int i = 0; i < 9; ++i) {
+            candidates[x][i][n - 1] = 0;
+        }
+    }
+
+    public void removeCandidateInBox(Coordinates c, int n) {
+        Coordinates tempCoords = findTopLeftOfTheBox(c);
+
+        int col = tempCoords.getCol();
+        int row = tempCoords.getRow();
+
+        for (int i = col; i < col + 3; ++i)
+            for (int k = row; k < row + 3; ++k)
+                candidates[i][k][n-1] = 0;
+    }
+
+    public Coordinates findTopLeftOfTheBox(Coordinates coordinates) {
+        int x, y, boxCol, boxRow;
+
+        boxCol = coordinates.getCol() / 3;
+        if (boxCol == 0)
+            x = 0;
+        else if (boxCol == 1)
+            x = 3;
+        else
+            x = 6;
+
+        boxRow = coordinates.getRow() / 3;
+        if (boxRow == 0)
+            y = 0;
+        else if (boxRow == 1)
+            y = 3;
+        else
+            y = 6;
+
+        return new Coordinates(x, y);
+    }
 }

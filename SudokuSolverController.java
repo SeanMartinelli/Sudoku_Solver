@@ -13,5 +13,11 @@ public class SudokuSolverController {
     }
 
 
+    public SudokuSolverView getView() {
+        return view;
+    }
 
+    public SudokuSolverModel getModel() {
+        return model;
+    }
 }
