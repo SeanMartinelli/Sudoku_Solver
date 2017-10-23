@@ -234,6 +234,11 @@ public class SudokuSolverView
         loadPuzzleItem.setMnemonic('L');
         fileMenu.add(loadPuzzleItem);
 
+        //set up New Game File menu item
+        JMenuItem savePuzzleItem = new JMenuItem("Save Puzzle");
+        savePuzzleItem.setMnemonic('S');
+        fileMenu.add(savePuzzleItem);
+
         // set up About File menu item
         JMenuItem quitItem = new JMenuItem("Quit");
         quitItem.setMnemonic('Q');
@@ -242,9 +247,28 @@ public class SudokuSolverView
         // set up Edit menu
         helpMenu = new JMenu( "Help" );
 
-        // set up Edit menu
+        // set up Hint menu
         hintMenu = new JMenu( "Hint" );
         hintMenu.setMnemonic('H');
+
+        JCheckBoxMenuItem checkOnFillItem = new JCheckBoxMenuItem("Check On Fill", true);
+        hintMenu.add(checkOnFillItem);
+
+        //set up Single Algorithm menu item
+        JMenuItem singleAlgoItem = new JMenuItem("Single Algorithm");
+        hintMenu.add(singleAlgoItem);
+
+        //set up Hidden Single menu item
+        JMenuItem hiddenSingleAlgoItem = new JMenuItem("Hidden Single Algorithm");
+        hintMenu.add(hiddenSingleAlgoItem);
+
+        //set up New Game File menu item
+        JMenuItem lockedCandidateAlgoItem = new JMenuItem("Locked Candidate Algorithm");
+        hintMenu.add(lockedCandidateAlgoItem);
+
+        //set up New Game File menu item
+        JMenuItem nakedPairsAlgoItem = new JMenuItem("Naked Pairs Algorithm");
+        hintMenu.add(nakedPairsAlgoItem);
 
         //Add items to the menuBar and frame
         menuBar.add(fileMenu);
@@ -252,6 +276,32 @@ public class SudokuSolverView
         menuBar.add(hintMenu);
         frame.setJMenuBar(menuBar);
     }
-}
 
+    public void UpdateBoard(int[][] newBoard)
+    {
+        for(int i = 0; i < buttonArray.length; ++i)
+            for(int j = 0; j < buttonArray[i].length; ++j)
+            {
+                if(newBoard[j][i] != 0)
+                    buttonArray[i][j].setText(Integer.toString(newBoard[j][i]));
+                else
+                    buttonArray[i][j].setText("");
+            }
+    }
+
+    public void ClearBoard()
+    {
+        for(int i = 0; i < buttonArray.length; ++i)
+            for(int j = 0; j < buttonArray[i].length; ++j)
+            {
+                buttonArray[i][j].setText("");
+                buttonArray[i][j].MakeEditable(true);
+            }
+    }
+
+    public void DisplayMessage(String message, String title)
+    {
+        JOptionPane.showMessageDialog(frame, message, title, JOptionPane.PLAIN_MESSAGE);
+    }
+}
 

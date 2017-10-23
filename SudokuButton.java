@@ -4,7 +4,6 @@
 
 import javax.swing.*;
 
-//FIXME: What do you think about that? This class in its own file.
 public class SudokuButton extends JButton
 {
     private Coordinates coords;

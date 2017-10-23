@@ -404,6 +404,7 @@ public class SudokuSolverModel {
         int col = tempCoords.getCol();
         int row = tempCoords.getRow();
 
+        //FIXME: should the ++i in the inner for loop be ++k?
         for (int i = col; i < col + 3; ++i) {
             for (int k = row; k < row + 3; ++i) {
                 if (board[i][k] == 0) {
