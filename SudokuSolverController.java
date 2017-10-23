@@ -57,8 +57,6 @@ public class SudokuSolverController {
 
     private void LoadPuzzleFromFile()
     {
-        ClearBoard();
-
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileFilter(new FileNameExtensionFilter("Text Documents (*.txt)", "txt"));
         int returnVal = fileChooser.showOpenDialog(view.GetFrame());
@@ -66,6 +64,8 @@ public class SudokuSolverController {
         if (returnVal == JFileChooser.APPROVE_OPTION)
         {
             try {
+                ClearBoard();
+
                 Scanner input = new Scanner(fileChooser.getSelectedFile());
 
                 while (input.hasNextLine())
@@ -146,7 +146,8 @@ public class SudokuSolverController {
 
     private void ClearBoard()
     {
-        //FIXME: Add Clear method from model
+        model.initializeBoardToZeros();
+        model.initializeCandidatesToDefault();
         view.ClearBoard();
     }
 

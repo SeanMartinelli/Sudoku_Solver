@@ -296,6 +296,7 @@ public class SudokuSolverView
             {
                 buttonArray[i][j].setText("");
                 buttonArray[i][j].MakeEditable(true);
+                buttonArray[i][j].setFont(new Font("Arial", Font.PLAIN, 24));
             }
     }
 
