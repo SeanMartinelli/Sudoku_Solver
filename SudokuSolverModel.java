@@ -421,6 +421,18 @@ public class SudokuSolverModel {
         return true;
     }
 
+    //FIXME: Implement
+    public boolean nakedPairsAlgorithm() {
+
+        return true;
+    }
+
+    //FIXME: Implement
+    public boolean resolveAllPossibleCells() {
+
+        return true;
+    }
+
 
 
 }
