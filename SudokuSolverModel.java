@@ -63,8 +63,8 @@ public class SudokuSolverModel {
 
     public void initializeBoardToZeros() {
         for (int n[]: board) {
-            for (int a: n)
-                a = 0;
+            for (int i = 0; i < 9; ++i)
+                n[i] = 0;
         }
     }
 
@@ -406,7 +406,7 @@ public class SudokuSolverModel {
 
         //FIXME: should the ++i in the inner for loop be ++k?
         for (int i = col; i < col + 3; ++i) {
-            for (int k = row; k < row + 3; ++i) {
+            for (int k = row; k < row + 3; ++k) {
                 if (board[i][k] == 0) {
                     if (getCandidatesAt(new Coordinates(i, k)).contains(cand))
                         return false;

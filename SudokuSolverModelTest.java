@@ -28,6 +28,11 @@ public class SudokuSolverModelTest {
                 assert a == 0;
             }
         }
+
+        testModel.getBoard()[0][0] = 1;
+        assert testModel.getPieceAt(new Coordinates(0,0)) == 1;
+        testModel.initializeBoardToZeros();
+        assert testModel.getPieceAt(new Coordinates(0,0)) == 0;
     }
 
     @Test
