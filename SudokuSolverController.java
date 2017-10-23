@@ -3,19 +3,22 @@
         -Maybe make updatePiece() in the model throw an exception instead of returning bool
         -Finish error handling in LoadPuzzleFromFile (if invalid index is in text file)
         -Also check to make sure there are actually 3 ints on input file line before trying to read them.
-        -Set up check on fill
         -Dialog boxes
-        -Check for win after each move
-        -save file
+        -make sure bert can handle saved files with "\r\n"
         -Hints menu
         -Use images and change cursor?
+        -Add Model Reset() method to ClearBoard()
+        -Single algorithm doesn't work until a puzzle is loaded
  */
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -52,17 +55,18 @@ public class SudokuSolverController {
         return model;
     }
 
-    public void LoadPuzzleFromFile()
+    private void LoadPuzzleFromFile()
     {
+        ClearBoard();
+
         JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Text Documents (*.txt)", "txt"));
         int returnVal = fileChooser.showOpenDialog(view.GetFrame());
 
         if (returnVal == JFileChooser.APPROVE_OPTION)
         {
-            File file = fileChooser.getSelectedFile();
-
             try {
-                Scanner input = new Scanner(file);
+                Scanner input = new Scanner(fileChooser.getSelectedFile());
 
                 while (input.hasNextLine())
                 {
@@ -79,13 +83,79 @@ public class SudokuSolverController {
                                 "does not match the cell's candidate list.");
                 }
             }
-            catch (FileNotFoundException exception)
-            {
+            catch (FileNotFoundException exception) {
                 System.err.println("File not found.");
             }
         }
 
         view.SetStatusLabel(""); //Clear original status label message
+    }
+
+    private void SavePuzzleToFile()
+    {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Text Documents (*.txt)", "txt"));
+
+        int returnVal = fileChooser.showSaveDialog(view.GetFrame());
+
+        if(returnVal == JFileChooser.APPROVE_OPTION)
+        {
+
+            //Check if file already exists
+            File checkFile = new File(fileChooser.getSelectedFile().toString() + ".txt");
+            if(checkFile.exists()) {
+                int userResponse = JOptionPane.showConfirmDialog(view.GetFrame(),
+                        "A puzzle with that name already exists. \nDo you want to replace it?",
+                        "Puzzle Already Exists", JOptionPane.YES_NO_OPTION);
+
+                if(userResponse == JOptionPane.NO_OPTION)
+                    return;
+            }
+
+            try {
+                FileWriter fileWriter = new FileWriter(fileChooser.getSelectedFile() + ".txt");
+
+                int[][] board = model.getBoard();
+
+                for(int i = 0; i < board.length; ++i)
+                    for(int j = 0; j < board[i].length; ++j)
+                    {
+                        if(board[i][j] != 0) {
+                            fileWriter.write(Integer.toString(j+1) + " " + Integer.toString(i+1));
+                            fileWriter.write(" " + Integer.toString(board[i][j]) + "\r\n");
+                        }
+                    }
+
+                fileWriter.flush();
+                fileWriter.close();
+            }
+            catch (IOException exception) {
+                System.err.println("Could not create file.");
+            }
+
+        }
+    }
+
+    private void UpdateViewBoard(int[][] newBoard)
+    {
+        if(newBoard != null) {
+            view.UpdateBoard(newBoard);
+            CheckForWin();
+        }
+    }
+
+    private void ClearBoard()
+    {
+        //FIXME: Add Clear method from model
+        view.ClearBoard();
+    }
+
+    private void CheckForWin()
+    {
+        if(model.gameComplete()) {
+            view.SetStatusLabel("You Win!");
+            view.DisplayMessage("You have found a solution! You Win!", "You Win!");
+        }
     }
 
     private static String CreateCandidatesMessage(List<Integer> candidateList)
@@ -133,6 +203,8 @@ public class SudokuSolverController {
                 List<Integer> candidateList = model.getCandidatesAt(button.GetCoordinates());
                 view.SetStatusLabel(CreateCandidatesMessage(candidateList));
             }
+
+            CheckForWin();
         }
     }
 
@@ -159,7 +231,27 @@ public class SudokuSolverController {
         {
             if(e.getActionCommand().equals("Load Puzzle"))
                 LoadPuzzleFromFile();
-            else if(e.getActionCommand().equals("Quit"))
+
+            else if(e.getActionCommand().equals("Save Puzzle"))
+                SavePuzzleToFile();
+
+            else if(e.getActionCommand().equals("Single Algorithm"))
+                UpdateViewBoard(model.singleAlgorithm());
+
+            else if(e.getActionCommand().equals("Hidden Single Algorithm"))
+                UpdateViewBoard(model.hiddenSingleAlgorithm());
+
+            else if(e.getActionCommand().equals("Locked Candidate Algorithm"))
+                java.lang.System.exit(0);
+
+            else if(e.getActionCommand().equals("Naked Pairs Algorithm"))
+                java.lang.System.exit(0);
+
+            else if(e.getActionCommand().equals("Check On Fill")) {
+                JCheckBoxMenuItem CheckOnFillItem = (JCheckBoxMenuItem)e.getSource();
+                checkOnFill = CheckOnFillItem.getState();
+
+            } else if(e.getActionCommand().equals("Quit"))
                 java.lang.System.exit(0);
         }
     }
