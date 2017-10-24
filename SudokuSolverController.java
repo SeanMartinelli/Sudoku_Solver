@@ -70,16 +70,17 @@ public class SudokuSolverController {
                 while (input.hasNextLine())
                 {
                     Scanner line = new Scanner(input.nextLine());
+                    //FIXME: No such element exception
                     int row = line.nextInt() - 1;
                     int col = line.nextInt() - 1;
                     int value = line.nextInt();
 
                     Coordinates coords = new Coordinates(col, row);
-                    if(model.updatePiece(coords, value, true))
+                   /* if(model.updatePiece(coords, value, true))
                         view.SetOriginalPiece(coords, value);
                     else
                         System.err.println("invalid: \"" + row + " " + col + " " + value + "\" " +
-                                "does not match the cell's candidate list.");
+                                "does not match the cell's candidate list.");*/
                 }
             }
             catch (FileNotFoundException exception) {
@@ -143,10 +144,12 @@ public class SudokuSolverController {
         }
     }
 
+    // FIXME: resetBoard function available
     private void ClearBoard()
     {
-        model.initializeBoardToZeros();
-        model.initializeCandidatesToDefault();
+        //model.initializeBoardToZeros();
+        //model.initializeCandidatesToDefault();
+        model.resetBoard();
         view.ClearBoard();
     }
 
@@ -190,10 +193,10 @@ public class SudokuSolverController {
 
             if(mode >= 1 && mode <= 9) //Insert number mode
             {
-                if(model.updatePiece(button.GetCoordinates(), mode, checkOnFill)) {
+                /*if(model.updatePiece(button.GetCoordinates(), mode, checkOnFill)) {
                     view.UpdatePosition(button.GetCoordinates(), mode);
                     view.HighLightLocation(button.GetCoordinates());
-                }
+                }*/
             }
             else if(mode == 10) //Erase Mode
             {
@@ -233,25 +236,32 @@ public class SudokuSolverController {
     private class MenuHandler implements ActionListener
     {
         @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            if(e.getActionCommand().equals("Load Puzzle"))
+        public void actionPerformed(ActionEvent e) {
+            if (e.getActionCommand().equals("Load Puzzle"))
                 LoadPuzzleFromFile();
 
-            else if(e.getActionCommand().equals("Save Puzzle"))
+            else if (e.getActionCommand().equals("Save Puzzle"))
                 SavePuzzleToFile();
 
-            else if(e.getActionCommand().equals("Single Algorithm"))
-                UpdateViewBoard(model.singleAlgorithm());
+            //FIXME: Coordinates returned from singleAlgorithm
+            else if (e.getActionCommand().equals("Single Algorithm")) {
+                //UpdateViewBoard(model.singleAlgorithm());
+            }
 
-            else if(e.getActionCommand().equals("Hidden Single Algorithm"))
-                UpdateViewBoard(model.hiddenSingleAlgorithm());
+            //FIXME: Coordinates returned from hiddenSingleAlgorithm
+            else if (e.getActionCommand().equals("Hidden Single Algorithm")) {
+               //UpdateViewBoard(model.hiddenSingleAlgorithm());
+            }
 
-            else if(e.getActionCommand().equals("Locked Candidate Algorithm"))
+            else if (e.getActionCommand().equals("Locked Candidate Algorithm"))
                 java.lang.System.exit(0);
 
-            else if(e.getActionCommand().equals("Naked Pairs Algorithm"))
-                java.lang.System.exit(0);
+
+            //FIXME: modified for testing
+            else if (e.getActionCommand().equals("Naked Pairs Algorithm")) {
+                System.out.println(model.nakedPairsAlgorithm());
+                //java.lang.System.exit(0);
+            }
 
             else if(e.getActionCommand().equals("Check On Fill")) {
                 JCheckBoxMenuItem CheckOnFillItem = (JCheckBoxMenuItem)e.getSource();
