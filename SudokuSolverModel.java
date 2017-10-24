@@ -6,7 +6,7 @@
 NOTES:
     - updatePiece(): generateCandidateListWholeBoard() instead of updateCandidateList()
         will allow to get rid of excess code - less efficient though\
-    - Erasing will messed up the candidates if Locked / Naked algorithms were used
+    - Erasing will mess up the candidates if Locked / Naked algorithms were used
  */
 
 
@@ -44,6 +44,7 @@ public class SudokuSolverModel {
 
         for (int i = 0; i < 9; ++i) {
             c = candidates[coords.getCol()][coords.getRow()][i];
+
             if (c != 0)
                 candidatesList.add(c);
         }
@@ -63,6 +64,7 @@ public class SudokuSolverModel {
     }
 
     public void initializeBoardToZeros() {
+
         for (int n[]: board) {
             for (int i = 0; i < 9; ++i)
                 n[i] = 0;
@@ -70,6 +72,7 @@ public class SudokuSolverModel {
     }
 
     public void initializeCandidatesToDefault() {
+
         for (int[][] col: candidates) {
             for (int[] row: col) {
                 for (int i = 0; i < 9; ++i)
@@ -79,6 +82,7 @@ public class SudokuSolverModel {
     }
 
     public boolean updatePiece(Coordinates coords, int num, boolean checkOnFill) {
+
         if (!inRange(num) || spotTaken(coords))
             return false;
         else if (!checkOnFill) {
@@ -105,12 +109,14 @@ public class SudokuSolverModel {
     }
 
     public boolean removePiece(Coordinates coords) {
+
         if (coordinatesInRange(coords) && spotTaken(coords)) {
             board[coords.getCol()][coords.getRow()] = 0;
             piecesOnBoard--;
             generateCandidateListWholeBoard();
             return true;
         }
+
         return false;
     }
 
@@ -127,6 +133,7 @@ public class SudokuSolverModel {
                 populateCandidates(i, k, usedCandidates);
             }
         }
+
         listCandidates();
     }
 
@@ -145,6 +152,7 @@ public class SudokuSolverModel {
     }
 
     public Set<Integer> findUsedCandCol(int column) {
+
         Set<Integer> temp = new HashSet<Integer>();
 
         for (int i = 0; i < 9; ++i) {
@@ -156,6 +164,7 @@ public class SudokuSolverModel {
     }
 
     public Set<Integer> findUsedCandRow(int row) {
+
         Set<Integer> temp = new HashSet<Integer>();
 
         for (int i = 0; i < 9; ++i) {
@@ -167,6 +176,7 @@ public class SudokuSolverModel {
     }
 
     public Set<Integer> findUsedCandBox(Coordinates c) {
+
         Set<Integer> temp = new HashSet<Integer>();
         Coordinates boxTop = findTopLeftOfTheBox(c);
 
@@ -182,6 +192,7 @@ public class SudokuSolverModel {
     }
 
     public void populateCandidates(int col, int row, Set<Integer> usedCand) {
+
         for (int i = 1; i <= 9; ++i) {
             if (!usedCand.contains(i))
                 candidates[col][row][i-1] = i;
@@ -195,6 +206,7 @@ public class SudokuSolverModel {
     }
 
     public void updateCandidateList(Coordinates coords, int num) {
+
         clearCandidatesAt(coords);
         removeCandidateInCol(coords, num);
         removeCandidateInRow(coords, num);
@@ -202,14 +214,18 @@ public class SudokuSolverModel {
     }
 
     public void removeCandidateInRow(Coordinates c, int n) {
+
         int y = c.getRow();
+
         for (int i = 0; i < 9; ++i) {
             candidates[i][y][n - 1] = 0;
         }
     }
 
     public void removeCandidateInCol(Coordinates c, int n) {
+
         int x = c.getCol();
+
         for (int i = 0; i < 9; ++i) {
             candidates[x][i][n - 1] = 0;
         }
@@ -238,6 +254,7 @@ public class SudokuSolverModel {
                         return false;
             }
         }
+
         return true;
     }
 
@@ -246,6 +263,7 @@ public class SudokuSolverModel {
     }
 
     private boolean uniqueInCol(Coordinates coords) {
+
         int tempPiece = getPieceAt(coords);
 
         for (int i = 0; i < 9; ++i) {
@@ -254,10 +272,12 @@ public class SudokuSolverModel {
                     return false;
             }
         }
+
         return true;
     }
 
     private boolean uniqueInRow(Coordinates coords) {
+
         int tempPiece = getPieceAt(coords);
 
         for (int i = 0; i < 9; ++i) {
@@ -266,10 +286,12 @@ public class SudokuSolverModel {
                     return false;
             }
         }
+
         return true;
     }
 
     private boolean uniqueInBox(Coordinates coords) {
+
         int tempPiece = getPieceAt(coords);
         Coordinates boxTop = findTopLeftOfTheBox(coords);
 
@@ -302,13 +324,16 @@ public class SudokuSolverModel {
     }
 
     public void clearCandidatesAt(Coordinates c) {
+
         int x = c.getCol();
         int y = c.getRow();
+
         for (int i = 0; i < 9; ++i)
             candidates[x][y][i] = 0;
     }
 
     public Coordinates findTopLeftOfTheBox(Coordinates coordinates) {
+
         int x, y, boxCol, boxRow;
 
         boxCol = coordinates.getCol() / 3;
@@ -331,8 +356,10 @@ public class SudokuSolverModel {
     }
 
     public  int[][] singleAlgorithm() {
+
         for (int i = 0; i < 9; ++i) {
             for (int k = 0; k < 9; ++k) {
+
                 if (board[i][k] == 0) {
                     List<Integer> tempList = getCandidatesAt(new Coordinates(i, k));
                     if (tempList.size() == 1) {
@@ -340,15 +367,20 @@ public class SudokuSolverModel {
                         return board;
                     }
                 }
+
             }
         }
+
         return null;        // to display message about failure
     }
 
     public int[][] hiddenSingleAlgorithm() {
+
         Coordinates tempCoords = new Coordinates(-1, -1);
+
         for (int i = 0; i < 9; ++i) {
             for (int k = 0; k < 9; ++k) {
+
                 if (board[i][k] == 0) {
                     tempCoords.setColAndRow(i, k);
                     List<Integer> tempCand = getCandidatesAt(tempCoords);
@@ -362,12 +394,15 @@ public class SudokuSolverModel {
                         }
                     }
                 }
+
             }
         }
+
         return null;        // to display message about failure
     }
 
     public boolean isHiddenSingle(int cand, Coordinates coords) {
+
         if (hiddenInCol(cand, coords))
             return true;
         else if (hiddenInRow(cand, coords))
@@ -379,7 +414,9 @@ public class SudokuSolverModel {
     }
 
     public boolean hiddenInCol(int cand, Coordinates c) {
+
         int col = c.getCol();
+
         for (int i = 0; i < 9; ++i) {
             if (board[col][i] == 0) {
                 if (!coordinatesSame(c, new Coordinates(col, i))) {
@@ -388,11 +425,14 @@ public class SudokuSolverModel {
                 }
             }
         }
+
         return true;
     }
 
     public boolean hiddenInRow(int cand, Coordinates c) {
+
         int row = c.getRow();
+
         for (int i = 0; i < 9; ++i) {
             if (board[i][row] == 0) {
                 if (!coordinatesSame(c, new Coordinates(i, row))) {
@@ -401,10 +441,12 @@ public class SudokuSolverModel {
                 }
             }
         }
+
         return true;
     }
 
     public boolean hiddenInBox(int cand, Coordinates c) {
+
         Coordinates tempCoords = findTopLeftOfTheBox(c);
 
         int col = tempCoords.getCol();
@@ -412,14 +454,17 @@ public class SudokuSolverModel {
 
         for (int i = col; i < col + 3; ++i) {
             for (int k = row; k < row + 3; ++k) {
+
                 if (board[i][k] == 0) {
                     if (!coordinatesSame(c, new Coordinates(i, k))) {
                         if (getCandidatesAt(new Coordinates(i, k)).contains(cand))
                             return false;
                     }
                 }
+
             }
         }
+
         return true;
     }
 
@@ -440,12 +485,17 @@ public class SudokuSolverModel {
         return checkColumns() || checkRows() || checkBoxes();
     }
 
+    //FIXME: remove print statement
     private boolean checkColumns() {
+
+        System.out.println("Columns");
+
         for (int col = 0; col < 9; ++col) {
             ArrayList<ArrayList<Integer>> nakedPairs = getColCandWithLengthOf(2, col);
             if (nakedPairs.size() > 1) {
                 ArrayList<Integer> sameCand = findSameCand(nakedPairs);
-                if (sameCand != null) {
+
+                if (sameCand != null && availableToRemoveCol(sameCand, col)) {
                     for (int i = 0; i < 9; ++i) {
                         if (!listAreSame(getCandidatesAt(new Coordinates(col, i)), sameCand)) {
                             for (int a : sameCand) {
@@ -453,14 +503,31 @@ public class SudokuSolverModel {
                             }
                         }
                     }
+
                     return true;
                 }
+
             }
         }
+
         return false;
     }
 
+    private boolean availableToRemoveCol(ArrayList<Integer>sameCand, int col) {
+
+        int count = 0;
+
+        for (int row = 0; row < 9; ++row) {
+            for (int a : sameCand)
+                if (getCandidatesAt(new Coordinates(col, row)).contains(a))
+                    count++;
+        }
+
+        return count > 4;
+    }
+
     private ArrayList<ArrayList<Integer>> getColCandWithLengthOf(int length, int col) {
+
         ArrayList<ArrayList<Integer>>  temp = new ArrayList<ArrayList<Integer>> ();
 
         for (int row = 0; row < 9; ++row) {
@@ -468,15 +535,21 @@ public class SudokuSolverModel {
             if (cand.size() == 2)
                 temp.add((ArrayList)cand);
         }
+
         return temp;
     }
 
+    //FIXME: remove print statement
     private boolean checkRows() {
+
+        System.out.println("Rows");
+
         for (int row = 0; row < 9; ++row) {
             ArrayList<ArrayList<Integer>> nakedPairs = getRowCandWithLengthOf(2, row);
             if (nakedPairs.size() > 1) {
                 ArrayList<Integer> sameCand = findSameCand(nakedPairs);
-                if (sameCand != null) {
+
+                if (sameCand != null && availableToRemoveRow(sameCand, row)) {
                     for (int i = 0; i < 9; ++i) {
                         if (!listAreSame(getCandidatesAt(new Coordinates(i, row)), sameCand)) {
                             for (int a : sameCand) {
@@ -484,15 +557,30 @@ public class SudokuSolverModel {
                             }
                         }
                     }
+
                     return true;
                 }
+
             }
         }
         return false;
     }
 
+    private boolean availableToRemoveRow(ArrayList<Integer> sameCand, int row) {
+
+        int count = 0;
+
+        for (int col = 0; col < 9; ++col) {
+            for (int a : sameCand)
+                if (getCandidatesAt(new Coordinates(col, row)).contains(a))
+                    count++;
+        }
+
+        return count > 4;
+    }
+
     private boolean listAreSame(List<Integer> L1, List<Integer> L2) {
-        System.out.println(L1 + " " + L2);
+
         if (L1.size() != L2.size())
             return false;
         else {
@@ -501,29 +589,38 @@ public class SudokuSolverModel {
                     return false;
             }
         }
+
         return true;
     }
 
     private ArrayList<Integer> findSameCand(ArrayList<ArrayList<Integer>> nakedPairs){
+
         for (int i = 0; i < nakedPairs.size(); ++i) {
             for (int k = i + 1; k < nakedPairs.size(); ++i) {
+
                 if (nakedPairs.get(i) == nakedPairs.get(k)) {
                     return nakedPairs.get(i);
                 }
+
             }
         }
+
         return null;
     }
 
+    //FIXME: remove print statement
     private boolean checkBoxes() {
-        System.out.println("boxes");
+
+        System.out.println("Boxes");
+
         for (int col = 0; col <= 6; col+=3 ) {
             for (int row = 0; row <= 6; row += 3) {
                 ArrayList<ArrayList<Integer>> nakedPairs =
                         getBoxCandWithLengthOf(2, new Coordinates(col, row));
                 if (nakedPairs.size() > 1) {
                     ArrayList<Integer> sameCand = findSameCand(nakedPairs);
-                    if ( sameCand != null) {
+
+                    if ( sameCand != null &&  availableToRemoveBox(sameCand, col, row)) {
                         for (int i = col; i < col + 3; ++i ) {
                             for (int k = row; k < row + 3; ++k) {
                                 if (!listAreSame(getCandidatesAt(new Coordinates(i, k)), sameCand)) {
@@ -532,15 +629,34 @@ public class SudokuSolverModel {
                                 }
                             }
                         }
+
                         return true;
                     }
+
                 }
             }
         }
+
         return false;
     }
 
+    private boolean availableToRemoveBox(ArrayList<Integer> sameCand, int col,  int row) {
+
+        int count = 0;
+
+        for (int i = col; i < col + 3; ++i) {
+            for (int k = row; k < row + 3; ++k) {
+                for (int a : sameCand)
+                    if (getCandidatesAt(new Coordinates(col, row)).contains(a))
+                        count++;
+            }
+        }
+
+        return count > 4;
+    }
+
     private ArrayList<ArrayList<Integer>> getBoxCandWithLengthOf(int length, Coordinates c) {
+
         ArrayList<ArrayList<Integer>>  temp = new ArrayList<ArrayList<Integer>> ();
 
         for (int col = c.getCol(); col < c.getCol()+3; ++col) {
@@ -550,10 +666,12 @@ public class SudokuSolverModel {
                     temp.add((ArrayList)cand);
             }
         }
+
         return temp;
     }
 
     private ArrayList<ArrayList<Integer>> getRowCandWithLengthOf(int length, int row) {
+
         ArrayList<ArrayList<Integer>>  temp = new ArrayList<ArrayList<Integer>> ();
 
         for (int col = 0; col < 9; ++col) {
@@ -561,15 +679,19 @@ public class SudokuSolverModel {
             if (cand.size() == 2)
                 temp.add((ArrayList)cand);
         }
+
         return temp;
     }
 
     private int cellsWithNumCandRow(int numCand, int row) {
+
         int count = 0;
+
         for (int col = 0; col < 9; ++col) {
             if (getCandidatesAt(new Coordinates(col, row)).size() == numCand)
                 count++;
         }
+
         return count;
     }
 
