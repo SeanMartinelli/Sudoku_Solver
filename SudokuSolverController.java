@@ -6,6 +6,7 @@
         -Dialog boxes
         -make sure bert can handle saved files with "\r\n"
         -Hints menu
+        -Apply highlight animation to hits
         -Look into Warning about junit that pops up when first running the program
  */
 
