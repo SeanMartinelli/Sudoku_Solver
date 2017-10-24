@@ -382,7 +382,6 @@ public class SudokuSolverModel {
         for (int i = 0; i < 9; ++i) {
             if (board[col][i] == 0) {
                 if (!coordinatesSame(c, new Coordinates(col, i))) {
-                    System.out.println("isHiddenSingle");
                     if (getCandidatesAt(new Coordinates(col, i)).contains(cand))
                         return false;
                 }
