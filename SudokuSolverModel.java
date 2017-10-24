@@ -7,7 +7,7 @@ NOTES:
     - updatePiece(): generateCandidateListWholeBoard() instead of updateCandidateList()
         will allow to get rid of excess code - less efficient though\
     - Erasing will mess up the candidates if Locked / Naked algorithms were used
-    -loading solved -> error
+    - loading solved -> error
  */
 
 
@@ -88,23 +88,25 @@ public class SudokuSolverModel {
         }
     }
 
-    public boolean updatePiece(Coordinates coords, int num, boolean checkOnFill) {
+    public void updatePiece (Coordinates coords, int num, boolean checkOnFill)
+                    throws Exception {
 
-        if (!inRange(num) || spotTaken(coords))
-            return false;
-        else if (!checkOnFill) {
+        //if (!inRange(num) || spotTaken(coords))
+        //    throw new Exception();
+        //else
+        if (!checkOnFill) {
             board[coords.getCol()][coords.getRow()] = num;
             updateCandidateList(coords, num);
             piecesOnBoard++;
-            return true;
+            return;
         }
         else if (onCandidateList(coords, num)) {
             board[coords.getCol()][coords.getRow()] = num;
             updateCandidateList(coords, num);
             piecesOnBoard++;
-            return true;
+            return;
         }
-        return false;
+        throw new Exception();
     }
 
     public boolean inRange(int n) {
@@ -362,7 +364,7 @@ public class SudokuSolverModel {
         return new Coordinates(x, y);
     }
 
-    public  Coordinates singleAlgorithm() {
+    public  Coordinates singleAlgorithm() throws Exception {
 
         for (int i = 0; i < 9; ++i) {
             for (int k = 0; k < 9; ++k) {
@@ -371,18 +373,22 @@ public class SudokuSolverModel {
                     Coordinates tempCoords = new Coordinates(i, k);
                     List<Integer> tempList = getCandidatesAt(tempCoords);
                     if (tempList.size() == 1) {
-                        updatePiece(tempCoords, tempList.get(0), true);
-                        return tempCoords;
+                        try {
+                            updatePiece(tempCoords, tempList.get(0), true);
+                            return tempCoords;
+                        }
+                        catch (Exception e) {
+                            throw e; // to display message about failure
+                        }
                     }
                 }
 
             }
         }
-
-        return null;        // to display message about failure
+        throw new Exception();
     }
 
-    public Coordinates hiddenSingleAlgorithm() {
+    public Coordinates hiddenSingleAlgorithm() throws Exception {
 
         Coordinates tempCoords = new Coordinates(-1, -1);
 
@@ -396,8 +402,13 @@ public class SudokuSolverModel {
                         for (int cand : tempCand) {
                             if (isHiddenSingle(cand, tempCoords)) {
                                 System.out.println("hiddenSingleAlgorithm");
-                                updatePiece(tempCoords, cand, true);
-                                return tempCoords;
+                                try {
+                                    updatePiece(tempCoords, cand, true);
+                                    return tempCoords;
+                                }
+                                catch (Exception e) {
+                                    throw e;
+                                }
                             }
                         }
                     }

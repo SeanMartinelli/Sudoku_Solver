@@ -75,11 +75,11 @@ public class SudokuSolverController {
                     int value = line.nextInt();
 
                     Coordinates coords = new Coordinates(col, row);
-                    if(model.updatePiece(coords, value, true))
+                   /* if(model.updatePiece(coords, value, true))
                         view.SetOriginalPiece(coords, value);
                     else
                         System.err.println("invalid: \"" + row + " " + col + " " + value + "\" " +
-                                "does not match the cell's candidate list.");
+                                "does not match the cell's candidate list.");*/
                 }
             }
             catch (FileNotFoundException exception) {
@@ -192,10 +192,10 @@ public class SudokuSolverController {
 
             if(mode >= 1 && mode <= 9) //Insert number mode
             {
-                if(model.updatePiece(button.GetCoordinates(), mode, checkOnFill)) {
+                /*if(model.updatePiece(button.GetCoordinates(), mode, checkOnFill)) {
                     view.UpdatePosition(button.GetCoordinates(), mode);
                     view.HighLightLocation(button.GetCoordinates());
-                }
+                }*/
             }
             else if(mode == 10) //Erase Mode
             {
