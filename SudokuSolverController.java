@@ -69,6 +69,7 @@ public class SudokuSolverController {
                 while (input.hasNextLine())
                 {
                     Scanner line = new Scanner(input.nextLine());
+                    //FIXME: No such element exception
                     int row = line.nextInt() - 1;
                     int col = line.nextInt() - 1;
                     int value = line.nextInt();
@@ -142,10 +143,12 @@ public class SudokuSolverController {
         }
     }
 
+    // FIXME: resetBoard function available
     private void ClearBoard()
     {
-        model.initializeBoardToZeros();
-        model.initializeCandidatesToDefault();
+        //model.initializeBoardToZeros();
+        //model.initializeCandidatesToDefault();
+        model.resetBoard();
         view.ClearBoard();
     }
 
@@ -239,11 +242,15 @@ public class SudokuSolverController {
             else if (e.getActionCommand().equals("Save Puzzle"))
                 SavePuzzleToFile();
 
-            else if (e.getActionCommand().equals("Single Algorithm"))
-                UpdateViewBoard(model.singleAlgorithm());
+            //FIXME: Coordinates returned from singleAlgorithm
+            else if (e.getActionCommand().equals("Single Algorithm")) {
+                //UpdateViewBoard(model.singleAlgorithm());
+            }
 
-            else if (e.getActionCommand().equals("Hidden Single Algorithm"))
-                UpdateViewBoard(model.hiddenSingleAlgorithm());
+            //FIXME: Coordinates returned from hiddenSingleAlgorithm
+            else if (e.getActionCommand().equals("Hidden Single Algorithm")) {
+               //UpdateViewBoard(model.hiddenSingleAlgorithm());
+            }
 
             else if (e.getActionCommand().equals("Locked Candidate Algorithm"))
                 java.lang.System.exit(0);

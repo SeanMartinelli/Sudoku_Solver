@@ -7,6 +7,7 @@ NOTES:
     - updatePiece(): generateCandidateListWholeBoard() instead of updateCandidateList()
         will allow to get rid of excess code - less efficient though\
     - Erasing will mess up the candidates if Locked / Naked algorithms were used
+    -loading solved -> error
  */
 
 
@@ -61,6 +62,12 @@ public class SudokuSolverModel {
 
     public void setCandidates(int[][][] candidates) {
         this.candidates = candidates;
+    }
+
+    public void resetBoard() {
+
+        initializeBoardToZeros();
+        initializeCandidatesToDefault();
     }
 
     public void initializeBoardToZeros() {
@@ -355,16 +362,17 @@ public class SudokuSolverModel {
         return new Coordinates(x, y);
     }
 
-    public  int[][] singleAlgorithm() {
+    public  Coordinates singleAlgorithm() {
 
         for (int i = 0; i < 9; ++i) {
             for (int k = 0; k < 9; ++k) {
 
                 if (board[i][k] == 0) {
-                    List<Integer> tempList = getCandidatesAt(new Coordinates(i, k));
+                    Coordinates tempCoords = new Coordinates(i, k);
+                    List<Integer> tempList = getCandidatesAt(tempCoords);
                     if (tempList.size() == 1) {
-                        updatePiece(new Coordinates(i, k), tempList.get(0), true);
-                        return board;
+                        updatePiece(tempCoords, tempList.get(0), true);
+                        return tempCoords;
                     }
                 }
 
@@ -374,7 +382,7 @@ public class SudokuSolverModel {
         return null;        // to display message about failure
     }
 
-    public int[][] hiddenSingleAlgorithm() {
+    public Coordinates hiddenSingleAlgorithm() {
 
         Coordinates tempCoords = new Coordinates(-1, -1);
 
@@ -388,8 +396,8 @@ public class SudokuSolverModel {
                         for (int cand : tempCand) {
                             if (isHiddenSingle(cand, tempCoords)) {
                                 System.out.println("hiddenSingleAlgorithm");
-                                updatePiece(new Coordinates(i, k), cand, true);
-                                return board;
+                                updatePiece(tempCoords, cand, true);
+                                return tempCoords;
                             }
                         }
                     }
