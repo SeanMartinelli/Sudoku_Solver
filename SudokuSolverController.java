@@ -6,9 +6,7 @@
         -Dialog boxes
         -make sure bert can handle saved files with "\r\n"
         -Hints menu
-        -Use images and change cursor?
-        -Add Model Reset() method to ClearBoard()
-        -Single algorithm doesn't work until a puzzle is loaded
+        -Look into Warning about junit that pops up when first running the program
  */
 
 import javax.swing.*;
@@ -191,8 +189,10 @@ public class SudokuSolverController {
 
             if(mode >= 1 && mode <= 9) //Insert number mode
             {
-                if(model.updatePiece(button.GetCoordinates(), mode, checkOnFill))
+                if(model.updatePiece(button.GetCoordinates(), mode, checkOnFill)) {
                     view.UpdatePosition(button.GetCoordinates(), mode);
+                    view.HighLightLocation(button.GetCoordinates());
+                }
             }
             else if(mode == 10) //Erase Mode
             {
@@ -214,12 +214,16 @@ public class SudokuSolverController {
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            if(e.getActionCommand().equals("x"))
+            if(e.getActionCommand().equals("x")) {
                 mode = 10;
-            else if(e.getActionCommand().equals("?"))
+                view.SetCursor("eraser_blue.png");
+            } else if(e.getActionCommand().equals("?")) {
                 mode = 11;
-            else
+                view.SetCursor("questionmark.png");
+            } else {
                 mode = Integer.parseInt(e.getActionCommand());
+                view.SetCursor(Integer.toString(mode) + ".png");
+            }
 
             view.SelectMode(mode);
         }
