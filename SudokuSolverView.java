@@ -373,6 +373,7 @@ public class SudokuSolverView
 
                 if(colorBackground.getRed() == 255) {
                     animationTimer.stop();
+                    buttonArray[coords.getRow()][coords.getCol()].setForeground(Color.darkGray);
                     return;
                 }
 
