@@ -354,6 +354,7 @@ public class SudokuSolverModel {
                     if (tempCand.size() > 1) {
                         for (int cand : tempCand) {
                             if (isHiddenSingle(cand, tempCoords)) {
+                                System.out.println("hiddenSingleAlgorithm");
                                 updatePiece(new Coordinates(i, k), cand, true);
                                 return board;
                             }
@@ -380,8 +381,11 @@ public class SudokuSolverModel {
         int col = c.getCol();
         for (int i = 0; i < 9; ++i) {
             if (board[col][i] == 0) {
-                if (getCandidatesAt(new Coordinates(col, i)).contains(cand))
-                    return false;
+                if (!coordinatesSame(c, new Coordinates(col, i))) {
+                    System.out.println("isHiddenSingle");
+                    if (getCandidatesAt(new Coordinates(col, i)).contains(cand))
+                        return false;
+                }
             }
         }
         return true;
@@ -391,8 +395,10 @@ public class SudokuSolverModel {
         int row = c.getRow();
         for (int i = 0; i < 9; ++i) {
             if (board[i][row] == 0) {
-                if (getCandidatesAt(new Coordinates(i, row)).contains(cand))
-                    return false;
+                if (!coordinatesSame(c, new Coordinates(i, row))) {
+                    if (getCandidatesAt(new Coordinates(i, row)).contains(cand))
+                        return false;
+                }
             }
         }
         return true;
@@ -404,16 +410,21 @@ public class SudokuSolverModel {
         int col = tempCoords.getCol();
         int row = tempCoords.getRow();
 
-        //FIXME: should the ++i in the inner for loop be ++k?
         for (int i = col; i < col + 3; ++i) {
             for (int k = row; k < row + 3; ++k) {
                 if (board[i][k] == 0) {
-                    if (getCandidatesAt(new Coordinates(i, k)).contains(cand))
-                        return false;
+                    if (!coordinatesSame(c, new Coordinates(i, k))) {
+                        if (getCandidatesAt(new Coordinates(i, k)).contains(cand))
+                            return false;
+                    }
                 }
             }
         }
         return true;
+    }
+
+    private boolean coordinatesSame(Coordinates a, Coordinates b) {
+        return (a.getCol() == b.getCol()) && (a.getRow() == b.getRow());
     }
 
     //FIXME: Implement
