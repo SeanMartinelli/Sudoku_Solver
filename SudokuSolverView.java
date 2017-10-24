@@ -365,21 +365,28 @@ public class SudokuSolverView
         if(animationTimer != null && animationTimer.isRunning())
             return;
 
-        animationTimer = new Timer(1, new ActionListener() {
+        animationTimer = new Timer(10, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Color color = buttonArray[coords.getRow()][coords.getCol()].getBackground();
+                Color colorBackground = buttonArray[coords.getRow()][coords.getCol()].getBackground();
+                Color colorForeground = buttonArray[coords.getRow()][coords.getCol()].getForeground();
 
-                if(color.getRed() == 255) {
+                if(colorBackground.getRed() == 255) {
                     animationTimer.stop();
                     return;
                 }
 
-                buttonArray[coords.getRow()][coords.getCol()].setBackground(new Color(color.getRed()+1,color.getGreen()+1,255));
+                buttonArray[coords.getRow()][coords.getCol()].setBackground(new Color(
+                        colorBackground.getRed()+5,colorBackground.getGreen()+5,255));
+                buttonArray[coords.getRow()][coords.getCol()].setForeground(new Color(
+                        colorForeground.getRed()-3,colorForeground.getGreen()-3,
+                        colorForeground.getBlue()-3));
+
             }
         });
 
-        buttonArray[coords.getRow()][coords.getCol()].setBackground(Color.blue);
+        buttonArray[coords.getRow()][coords.getCol()].setBackground(new Color(0, 0, 255));
+        buttonArray[coords.getRow()][coords.getCol()].setForeground(Color.white);
         animationTimer.start();
     }
 

@@ -76,11 +76,14 @@ public class SudokuSolverController {
                     int value = line.nextInt();
 
                     Coordinates coords = new Coordinates(col, row);
-                   /* if(model.updatePiece(coords, value, true))
+                    try {
+                        model.updatePiece(coords, value, true);
                         view.SetOriginalPiece(coords, value);
-                    else
+                    }
+                    catch (Exception e) {
                         System.err.println("invalid: \"" + row + " " + col + " " + value + "\" " +
-                                "does not match the cell's candidate list.");*/
+                                "does not match the cell's candidate list.");
+                    }
                 }
             }
             catch (FileNotFoundException exception) {
@@ -193,10 +196,14 @@ public class SudokuSolverController {
 
             if(mode >= 1 && mode <= 9) //Insert number mode
             {
-                /*if(model.updatePiece(button.GetCoordinates(), mode, checkOnFill)) {
+                try {
+                    model.updatePiece(button.GetCoordinates(), mode, checkOnFill);
                     view.UpdatePosition(button.GetCoordinates(), mode);
                     view.HighLightLocation(button.GetCoordinates());
-                }*/
+                }
+                catch (Exception exception) {
+                    //Ignore invalid piece
+                }
             }
             else if(mode == 10) //Erase Mode
             {
@@ -237,15 +244,22 @@ public class SudokuSolverController {
     {
         @Override
         public void actionPerformed(ActionEvent e) {
+
+            view.SetStatusLabel("");
+
             if (e.getActionCommand().equals("Load Puzzle"))
                 LoadPuzzleFromFile();
 
             else if (e.getActionCommand().equals("Save Puzzle"))
                 SavePuzzleToFile();
 
-            //FIXME: Coordinates returned from singleAlgorithm
             else if (e.getActionCommand().equals("Single Algorithm")) {
-                //UpdateViewBoard(model.singleAlgorithm());
+                try {
+                    Coordinates coords = model.singleAlgorithm();
+                    view.UpdatePosition(coords, model.getPieceAt(coords));
+                } catch (Exception exception) {
+                    view.SetStatusLabel("Single algorithm could not find a piece.");
+                }
             }
 
             //FIXME: Coordinates returned from hiddenSingleAlgorithm
