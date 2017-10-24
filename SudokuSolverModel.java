@@ -5,7 +5,8 @@
 /*
 NOTES:
     - updatePiece(): generateCandidateListWholeBoard() instead of updateCandidateList()
-        will allow to get rid of excess code - less efficient though
+        will allow to get rid of excess code - less efficient though\
+    - Erasing will messed up the candidates if Locked / Naked algorithms were used
  */
 
 
@@ -428,20 +429,154 @@ public class SudokuSolverModel {
 
     //FIXME: Implement
     public boolean lockedCandidateAlgorithm() {
+        // col
+        // row
+        // boxes
 
         return true;
     }
 
-    //FIXME: Implement
     public boolean nakedPairsAlgorithm() {
+        return checkColumns() || checkRows() || checkBoxes();
+    }
 
+    private boolean checkColumns() {
+        for (int col = 0; col < 9; ++col) {
+            ArrayList<ArrayList<Integer>> nakedPairs = getColCandWithLengthOf(2, col);
+            if (nakedPairs.size() > 1) {
+                ArrayList<Integer> sameCand = findSameCand(nakedPairs);
+                if (sameCand != null) {
+                    for (int i = 0; i < 9; ++i) {
+                        if (!listAreSame(getCandidatesAt(new Coordinates(col, i)), sameCand)) {
+                            for (int a : sameCand) {
+                                candidates[col][i][a - 1] = 0;
+                            }
+                        }
+                    }
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private ArrayList<ArrayList<Integer>> getColCandWithLengthOf(int length, int col) {
+        ArrayList<ArrayList<Integer>>  temp = new ArrayList<ArrayList<Integer>> ();
+
+        for (int row = 0; row < 9; ++row) {
+            List<Integer> cand = getCandidatesAt(new Coordinates(col, row));
+            if (cand.size() == 2)
+                temp.add((ArrayList)cand);
+        }
+        return temp;
+    }
+
+    private boolean checkRows() {
+        for (int row = 0; row < 9; ++row) {
+            ArrayList<ArrayList<Integer>> nakedPairs = getRowCandWithLengthOf(2, row);
+            if (nakedPairs.size() > 1) {
+                ArrayList<Integer> sameCand = findSameCand(nakedPairs);
+                if (sameCand != null) {
+                    for (int i = 0; i < 9; ++i) {
+                        if (!listAreSame(getCandidatesAt(new Coordinates(i, row)), sameCand)) {
+                            for (int a : sameCand) {
+                                candidates[i][row][a - 1] = 0;
+                            }
+                        }
+                    }
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean listAreSame(List<Integer> L1, List<Integer> L2) {
+        System.out.println(L1 + " " + L2);
+        if (L1.size() != L2.size())
+            return false;
+        else {
+            for (int i = 0; i < L1.size(); ++i) {
+                if (L1.get(i) != L2.get(i))
+                    return false;
+            }
+        }
         return true;
     }
 
-    //FIXME: Implement
-    public boolean resolveAllPossibleCells() {
+    private ArrayList<Integer> findSameCand(ArrayList<ArrayList<Integer>> nakedPairs){
+        for (int i = 0; i < nakedPairs.size(); ++i) {
+            for (int k = i + 1; k < nakedPairs.size(); ++i) {
+                if (nakedPairs.get(i) == nakedPairs.get(k)) {
+                    return nakedPairs.get(i);
+                }
+            }
+        }
+        return null;
+    }
 
-        return true;
+    private boolean checkBoxes() {
+        System.out.println("boxes");
+        for (int col = 0; col <= 6; col+=3 ) {
+            for (int row = 0; row <= 6; row += 3) {
+                ArrayList<ArrayList<Integer>> nakedPairs =
+                        getBoxCandWithLengthOf(2, new Coordinates(col, row));
+                if (nakedPairs.size() > 1) {
+                    ArrayList<Integer> sameCand = findSameCand(nakedPairs);
+                    if ( sameCand != null) {
+                        for (int i = col; i < col + 3; ++i ) {
+                            for (int k = row; k < row + 3; ++k) {
+                                if (!listAreSame(getCandidatesAt(new Coordinates(i, k)), sameCand)) {
+                                     for (int a : sameCand)
+                                        candidates[i][k][a - 1] = 0;
+                                }
+                            }
+                        }
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private ArrayList<ArrayList<Integer>> getBoxCandWithLengthOf(int length, Coordinates c) {
+        ArrayList<ArrayList<Integer>>  temp = new ArrayList<ArrayList<Integer>> ();
+
+        for (int col = c.getCol(); col < c.getCol()+3; ++col) {
+            for (int row = c.getRow(); row < c.getRow()+3; ++row) {
+                List<Integer> cand = getCandidatesAt(new Coordinates(col, row));
+                if (cand.size() == 2)
+                    temp.add((ArrayList)cand);
+            }
+        }
+        return temp;
+    }
+
+    private ArrayList<ArrayList<Integer>> getRowCandWithLengthOf(int length, int row) {
+        ArrayList<ArrayList<Integer>>  temp = new ArrayList<ArrayList<Integer>> ();
+
+        for (int col = 0; col < 9; ++col) {
+            List<Integer> cand = getCandidatesAt(new Coordinates(col, row));
+            if (cand.size() == 2)
+                temp.add((ArrayList)cand);
+        }
+        return temp;
+    }
+
+    private int cellsWithNumCandRow(int numCand, int row) {
+        int count = 0;
+        for (int col = 0; col < 9; ++col) {
+            if (getCandidatesAt(new Coordinates(col, row)).size() == numCand)
+                count++;
+        }
+        return count;
+    }
+
+    //FIXME: Implement
+    public int [][] resolveAllPossibleCells() {
+
+        return board;
     }
 
 

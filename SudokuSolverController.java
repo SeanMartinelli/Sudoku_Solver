@@ -228,25 +228,24 @@ public class SudokuSolverController {
     private class MenuHandler implements ActionListener
     {
         @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            if(e.getActionCommand().equals("Load Puzzle"))
+        public void actionPerformed(ActionEvent e) {
+            if (e.getActionCommand().equals("Load Puzzle"))
                 LoadPuzzleFromFile();
 
-            else if(e.getActionCommand().equals("Save Puzzle"))
+            else if (e.getActionCommand().equals("Save Puzzle"))
                 SavePuzzleToFile();
 
-            else if(e.getActionCommand().equals("Single Algorithm"))
+            else if (e.getActionCommand().equals("Single Algorithm"))
                 UpdateViewBoard(model.singleAlgorithm());
 
-            else if(e.getActionCommand().equals("Hidden Single Algorithm"))
+            else if (e.getActionCommand().equals("Hidden Single Algorithm"))
                 UpdateViewBoard(model.hiddenSingleAlgorithm());
 
-            else if(e.getActionCommand().equals("Locked Candidate Algorithm"))
+            else if (e.getActionCommand().equals("Locked Candidate Algorithm"))
                 java.lang.System.exit(0);
 
-            else if(e.getActionCommand().equals("Naked Pairs Algorithm"))
-                java.lang.System.exit(0);
+            else if (e.getActionCommand().equals("Naked Pairs Algorithm"))
+                System.out.println(model.nakedPairsAlgorithm());
 
             else if(e.getActionCommand().equals("Check On Fill")) {
                 JCheckBoxMenuItem CheckOnFillItem = (JCheckBoxMenuItem)e.getSource();
