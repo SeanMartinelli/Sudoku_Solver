@@ -267,8 +267,11 @@ public class SudokuSolverController {
                //UpdateViewBoard(model.hiddenSingleAlgorithm());
             }
 
-            else if (e.getActionCommand().equals("Locked Candidate Algorithm"))
-                java.lang.System.exit(0);
+            //FIXME: modified for testing
+            else if (e.getActionCommand().equals("Locked Candidate Algorithm")) {
+                System.out.println(model.lockedCandidateAlgorithm());
+                //java.lang.System.exit(0);
+            }
 
 
             //FIXME: modified for testing

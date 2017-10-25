@@ -13,7 +13,6 @@ NOTES:
 
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SudokuSolverModelTest {
@@ -58,11 +57,11 @@ public class SudokuSolverModelTest {
 
     @Test
     void testInRange() {
-        assert testModel.inRange(0) == false;
+        assert testModel.inBoardRange(0) == false;
         for (int i = 1; i <= 9; ++i)
-            assert testModel.inRange(i) == true;
+            assert testModel.inBoardRange(i) == true;
 
-        assert testModel.inRange(10) == false;
+        assert testModel.inBoardRange(10) == false;
     }
 
     @Test

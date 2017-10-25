@@ -91,7 +91,7 @@ public class SudokuSolverModel {
     public void updatePiece (Coordinates coords, int num, boolean checkOnFill)
                     throws Exception {
 
-        //if (!inRange(num) || spotTaken(coords))
+        //if (!inBoardRange(num) || spotTaken(coords))
         //    throw new Exception();
         //else
         if (!checkOnFill) {
@@ -109,7 +109,7 @@ public class SudokuSolverModel {
         throw new Exception();
     }
 
-    public boolean inRange(int n) {
+    public boolean inBoardRange(int n) {
         return (n >= 1) && (n <= 9 );
     }
 
@@ -491,21 +491,296 @@ public class SudokuSolverModel {
         return (a.getCol() == b.getCol()) && (a.getRow() == b.getRow());
     }
 
-    //FIXME: Implement
     public boolean lockedCandidateAlgorithm() {
-        // col
-        // row
-        // boxes
+
+        for (int i = 0; i < 9; ++i) {
+           if (restrictedToColBox(i))
+               return true;
+           else if (restrictedToRowBox(i))
+               return true;
+           else if (restrictedToBoxCol(i))
+               return true;
+           else if (restrictedToBoxRow(i))
+               return true;
+        }
+
+        return false;
+    }
+
+    private boolean restrictedToColBox(int col) {
+        System.out.println("restrictedToColBox");
+        for (int row = 0; row < 9; ++row) {
+            List<Integer> myCand = getCandidatesAt(new Coordinates(col, row));
+            for (int cand : myCand) {
+                List<Integer> presentAtIndeces = findOccuranceIndecesInCol(col, cand);
+                if (presentAtIndeces.size() <= 3) {
+                    int boxID = inBoxRange(presentAtIndeces);
+                    Coordinates boxStart = findTopLeftOfTheBox(new Coordinates(col, (boxID * 3)));
+                    if (boxID != -1 && (numCandOccurenceInBox(boxStart, cand) > presentAtIndeces.size())) {
+                        for (int i = boxStart.getCol(); i < boxStart.getCol() + 3; ++i){
+                            for (int k = boxStart.getRow(); k < boxStart.getRow() + 3; ++k){
+                                if (i != col ) {
+                                    candidates[i][k][cand - 1] = 0;
+                                    System.out.println("cand: " + cand);
+                                    System.out.println("col: " + i + ", row " + k);
+                                }
+                            }
+                        }
+                        return  true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private int numCandOccurenceInBox(Coordinates boxStart, int cand) {
+
+        int counter = 0;
+
+        for (int col = boxStart.getCol(); col < boxStart.getCol() + 3; ++col) {
+            for (int row = boxStart.getRow(); row < boxStart.getRow() + 3; ++row) {
+                if (getCandidatesAt(new Coordinates(col, row)).contains(cand))
+                    ++counter;
+            }
+        }
+
+        return counter;
+    }
+
+    private int inBoxRange(List <Integer> presentAtIndeces) {
+        if (inGivenRange(0, 2, presentAtIndeces)) {
+            return 0;
+        }
+        else if (inGivenRange(3, 5, presentAtIndeces)) {
+            return 1;
+        }
+        else if (inGivenRange(6, 8, presentAtIndeces)) {
+            return 2;
+        }
+        else
+            return -1;
+    }
+
+    private boolean inGivenRange(int lowerBound, int upperBound, List<Integer> list) {
+
+        for (int a : list) {
+            if (a < lowerBound || a > upperBound) {
+                return false;
+            }
+        }
 
         return true;
     }
 
+    private List<Integer> findOccuranceIndecesInCol(int col, int cand) {
+        List<Integer> temp = new ArrayList<>();
+        for (int row = 0; row < 9; ++row) {
+            if (getCandidatesAt(new Coordinates(col, row)).contains(cand)) {
+                temp.add(row);
+            }
+        }
+        return temp;
+    }
+
+    private boolean restrictedToRowBox(int row) {
+        System.out.println("restrictedToRowBox");
+        for (int col = 0; col < 9; ++col) {
+            List<Integer> myCand = getCandidatesAt(new Coordinates(col, row));
+            for (int cand : myCand) {
+                List<Integer> presentAtIndeces = findOccuranceIndecesInRow(row, cand);
+                if (presentAtIndeces.size() <= 3) {
+                    int boxID = inBoxRange(presentAtIndeces);
+                    Coordinates boxStart = findTopLeftOfTheBox(new Coordinates((boxID * 3), row));
+                    if (boxID != -1 && (numCandOccurenceInBox(boxStart, cand) > presentAtIndeces.size())) {
+                        for (int i = boxStart.getCol(); i < boxStart.getCol() + 3; ++i){
+                            for (int k = boxStart.getRow(); k < boxStart.getRow() + 3; ++k){
+                                if (k != row ) {
+                                    candidates[i][k][cand - 1] = 0;
+                                    System.out.println("cand: " + cand);
+                                    System.out.println("col: " + i + ", row " + k);
+                                }
+                            }
+                        }
+                        return  true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private List<Integer> findOccuranceIndecesInRow(int row, int cand) {
+        List<Integer> temp = new ArrayList<>();
+        for (int col = 0; col < 9; ++col) {
+            if (getCandidatesAt(new Coordinates(col, row)).contains(cand)) {
+                temp.add(col);
+            }
+        }
+        return temp;
+    }
+
+    private boolean restrictedToBoxCol(int boxIndex) {
+        System.out.println("restrictedToBoxCol " );
+        Coordinates boxStart = findTopLeftByIndex(boxIndex);
+        for (int col = boxStart.getCol(); col < boxStart.getCol() + 3; ++col) {
+            for (int row = boxStart.getRow(); row < boxStart.getRow() + 3; ++row) {
+                List<Integer> myCand = getCandidatesAt(new Coordinates(col, row));
+                for (int cand : myCand) {
+                    List<Coordinates> presentAtCoordinates = findOccuranceCoordinatesInBox(boxStart, cand);
+                    if (presentAtCoordinates.size() <= 3) {
+                        int colID = inOneColumn(presentAtCoordinates);
+                        if (colID != -1 && (numCandOccurenceInCol(colID, cand) > presentAtCoordinates.size())) {
+                            for (int myRow = 0; myRow < 9; ++myRow) {
+                                if (myRow != boxStart.getRow() && myRow != boxStart.getRow()+1
+                                            && myRow != boxStart.getRow()+2) {
+
+                                    candidates[colID][myRow][cand - 1] = 0;
+                                    System.out.println("cand: " + cand);
+                                    System.out.println("col: " + colID + ", row " + myRow);
+                                }
+                            }
+                            return  true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private int numCandOccurenceInCol(int colID, int cand) {
+
+        int count = 0;
+
+        for (int row = 0; row < 9; ++row) {
+            if (getCandidatesAt(new Coordinates(colID, row)).contains(cand))
+                ++count;
+        }
+
+        return count;
+    }
+
+    private int inOneColumn(List<Coordinates> list) {
+        int col = list.get(0).getCol();
+
+        for (Coordinates c : list) {
+            if (c.getCol() != col)
+                return -1;
+        }
+
+        return col;
+    }
+
+    private List<Coordinates> findOccuranceCoordinatesInBox(Coordinates boxStart, int cand) {
+
+        List<Coordinates> temp = new ArrayList<Coordinates>();
+
+        for (int col = boxStart.getCol(); col < boxStart.getCol() + 3;  ++col) {
+            for (int row = boxStart.getRow(); row < boxStart.getRow() + 3; ++row) {
+                if (getCandidatesAt(new Coordinates(col, row)).contains(cand))
+                    temp.add(new Coordinates(col, row));
+            }
+        }
+
+        return temp;
+    }
+
+    private Coordinates findTopLeftByIndex(int boxIndex) {
+
+        Coordinates temp = new Coordinates(-1, -1);
+
+        switch (boxIndex) {
+            case 0:     temp.setColAndRow(0,0);
+                break;
+            case 1:     temp.setColAndRow(3,0);
+                break;
+            case 2:     temp.setColAndRow(6,0);
+                break;
+            case 3:     temp.setColAndRow(0,3);
+                break;
+            case 4:     temp.setColAndRow(3,3);
+                break;
+            case 5:     temp.setColAndRow(6,3);
+                break;
+            case 6:     temp.setColAndRow(0,6);
+                break;
+            case 7:     temp.setColAndRow(3,6);
+                break;
+            case 8:     temp.setColAndRow(6,6);
+                break;
+        }
+
+        return temp;
+    }
+
+    private boolean restrictedToBoxRow(int boxIndex) {
+        System.out.println("restrictedToBoxRow");
+        Coordinates boxStart = findTopLeftByIndex(boxIndex);
+        for (int col = boxStart.getCol(); col < boxStart.getCol() + 3; ++col) {
+            for (int row = boxStart.getRow(); row < boxStart.getRow() + 3; ++row) {
+                List<Integer> myCand = getCandidatesAt(new Coordinates(col, row));
+                for (int cand : myCand) {
+                    List<Coordinates> presentAtCoordinates = findOccuranceCoordinatesInBox(boxStart, cand);
+                    if (presentAtCoordinates.size() <= 3) {
+                        int rowID = inOneRow(presentAtCoordinates);
+                        if (rowID != -1 && (numCandOccurenceInRow(rowID, cand) > presentAtCoordinates.size())) {
+                            for (int myCol = 0; myCol < 9; ++myCol) {
+                                if (myCol != boxStart.getCol() && myCol != boxStart.getCol()+1
+                                        && myCol != boxStart.getCol()+2) {
+
+                                    candidates[myCol][rowID][cand - 1] = 0;
+                                    System.out.println("cand: " + cand);
+                                    System.out.println("col: " + myCol + ", row " + rowID);
+                                }
+                            }
+                            return  true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private int numCandOccurenceInRow(int rowID, int cand) {
+
+        int count = 0;
+
+        for (int col = 0; col < 9; ++col) {
+            if (getCandidatesAt(new Coordinates(col, rowID)).contains(cand))
+                ++count;
+        }
+
+        return count;
+    }
+
+    private int inOneRow(List<Coordinates> list) {
+        int row = list.get(0).getRow();
+
+        for (Coordinates c : list) {
+            if (c.getRow() != row)
+                return -1;
+        }
+
+        return row;
+    }
+
+    private boolean lockedCandCheckRows() {
+
+        return false;
+    }
+
+    private boolean lockedCandCheckBoxes() {
+        return false;
+    }
+
     public boolean nakedPairsAlgorithm() {
-        return checkColumns() || checkRows() || checkBoxes();
+        return nakedPairsCheckColumns() || nakedPairsCheckRows() || nakedPairsCheckBoxes();
     }
 
     //FIXME: remove print statement
-    private boolean checkColumns() {
+    private boolean nakedPairsCheckColumns() {
 
         System.out.println("Columns");
 
@@ -559,7 +834,7 @@ public class SudokuSolverModel {
     }
 
     //FIXME: remove print statement
-    private boolean checkRows() {
+    private boolean nakedPairsCheckRows() {
 
         System.out.println("Rows");
 
@@ -628,7 +903,7 @@ public class SudokuSolverModel {
     }
 
     //FIXME: remove print statement
-    private boolean checkBoxes() {
+    private boolean nakedPairsCheckBoxes() {
 
         System.out.println("Boxes");
 
