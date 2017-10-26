@@ -299,7 +299,10 @@ public class SudokuSolverController {
 
             //FIXME: modified for testing
             else if (e.getActionCommand().equals("Locked Candidate Algorithm")) {
-                System.out.println(model.lockedCandidateAlgorithm());
+                if(model.lockedCandidateAlgorithm())
+                    view.SetStatusLabel("Locked candidate found.");
+                else
+                    view.SetStatusLabel("Locked candidate not found.");
 
             } else if (e.getActionCommand().equals("Naked Pairs Algorithm")) {
                 if(model.nakedPairsAlgorithm())
@@ -308,7 +311,7 @@ public class SudokuSolverController {
                     view.SetStatusLabel("Naked pair not found.");
 
             } else if (e.getActionCommand().equals("Fill All Possible Blank Cells")) {
-                java.lang.System.exit(0);
+               view.UpdateBoard(model.resolveAllPossibleCells());
 
             } else if(e.getActionCommand().equals("Check On Fill")) {
                 JCheckBoxMenuItem CheckOnFillItem = (JCheckBoxMenuItem)e.getSource();

@@ -8,6 +8,7 @@ NOTES:
         will allow to get rid of excess code - less efficient though\
     - Erasing will mess up the candidates if Locked / Naked algorithms were used
     - loading solved -> error
+    - should naked / locked look until value will be filled in the cell? (single)
  */
 
 
@@ -66,6 +67,7 @@ public class SudokuSolverModel {
 
     public void resetBoard() {
 
+        piecesOnBoard = 0;
         initializeBoardToZeros();
         initializeCandidatesToDefault();
     }
@@ -211,6 +213,7 @@ public class SudokuSolverModel {
     }
 
     public boolean gameComplete() {
+        System.out.println(piecesOnBoard + " " + correctPiecesArrangement());
         return piecesOnBoard == 81 && correctPiecesArrangement();
     }
 
@@ -366,6 +369,9 @@ public class SudokuSolverModel {
 
     public  Coordinates singleAlgorithm() throws Exception {
 
+        System.out.println();
+        System.out.println("singleAlgorithm():");
+
         for (int i = 0; i < 9; ++i) {
             for (int k = 0; k < 9; ++k) {
 
@@ -388,6 +394,46 @@ public class SudokuSolverModel {
         throw new Exception();
     }
 
+    //FIXME: handling exc to implement resolveAll
+    public Coordinates hiddenSingleAlgorithm() throws Exception {
+
+        System.out.println();
+        System.out.println("hiddenSingleAlgorithm():");
+
+        Coordinates tempCoords = new Coordinates(-1, -1);
+
+        for (int i = 0; i < 9; ++i) {
+            for (int k = 0; k < 9; ++k) {
+
+                if (board[i][k] == 0) {
+                    tempCoords.setColAndRow(i, k);
+                    List<Integer> tempCand = getCandidatesAt(tempCoords);
+                    if (tempCand.size() > 1) {
+                        for (int cand : tempCand) {
+
+
+                                if (isHiddenSingle(cand, tempCoords)) {
+                                    try {
+                                        updatePiece(tempCoords, cand, true);
+                                        return tempCoords;
+                                    } catch (Exception e) {
+                                        throw e;
+                                    }
+                                }
+
+
+                        }
+                    }
+                }
+
+            }
+        }
+
+        throw new Exception();        // to display message about failure
+    }
+
+    /* copy --
+        //FIXME: handling exc to implement resolveAll
     public Coordinates hiddenSingleAlgorithm() throws Exception {
 
         Coordinates tempCoords = new Coordinates(-1, -1);
@@ -400,16 +446,19 @@ public class SudokuSolverModel {
                     List<Integer> tempCand = getCandidatesAt(tempCoords);
                     if (tempCand.size() > 1) {
                         for (int cand : tempCand) {
-                            if (isHiddenSingle(cand, tempCoords)) {
-                                System.out.println("hiddenSingleAlgorithm");
-                                try {
-                                    updatePiece(tempCoords, cand, true);
-                                    return tempCoords;
+
+
+                                if (isHiddenSingle(cand, tempCoords)) {
+                                    System.out.println("hiddenSingleAlgorithm");
+                                    try {
+                                        updatePiece(tempCoords, cand, true);
+                                        return tempCoords;
+                                    } catch (Exception e) {
+                                        throw e;
+                                    }
                                 }
-                                catch (Exception e) {
-                                    throw e;
-                                }
-                            }
+
+
                         }
                     }
                 }
@@ -419,6 +468,7 @@ public class SudokuSolverModel {
 
         return null;        // to display message about failure
     }
+    */
 
     public boolean isHiddenSingle(int cand, Coordinates coords) {
 
@@ -493,7 +543,12 @@ public class SudokuSolverModel {
 
     public boolean lockedCandidateAlgorithm() {
 
+        System.out.println();
+        System.out.println("lockedCandidateAlgorithm():");
+
         for (int i = 0; i < 9; ++i) {
+
+            System.out.println();
 
            if (restrictedToColBox(i))
                return true;
@@ -719,6 +774,7 @@ public class SudokuSolverModel {
         return temp;
     }
 
+    // check box, remove from row
     private boolean restrictedToBoxRow(int boxIndex) {
         System.out.println("restrictedToBoxRow");
         Coordinates boxStart = findTopLeftByIndex(boxIndex);
@@ -781,6 +837,10 @@ public class SudokuSolverModel {
     }
 
     public boolean nakedPairsAlgorithm() {
+
+        System.out.println();
+        System.out.println("nakedPairsAlgorithm():");
+
         return nakedPairsCheckColumns() || nakedPairsCheckRows() || nakedPairsCheckBoxes();
     }
 
@@ -997,8 +1057,55 @@ public class SudokuSolverModel {
     //FIXME: Implement
     public int [][] resolveAllPossibleCells() {
 
-        return board;
+        while (true) {
+
+            boolean singleAlgorithmStatus = true;
+            boolean hiddenSingleAlgorithmStatus = true;
+            boolean nakedPairsAlgorithmStatus = true;
+            boolean lockedCandidateAlgorithmStatus = true;
+
+            try {
+                singleAlgorithm();
+            } catch (Exception exc) {
+                singleAlgorithmStatus = false;
+            }
+
+            if (singleAlgorithmStatus == false) {
+
+                try {
+                    hiddenSingleAlgorithm();
+                } catch (Exception exc) {
+                    hiddenSingleAlgorithmStatus = false;
+                }
+            }
+
+            if (hiddenSingleAlgorithmStatus == false) {
+                lockedCandidateAlgorithmStatus = lockedCandidateAlgorithm();
+            }
+
+            if (lockedCandidateAlgorithmStatus == false) {
+                nakedPairsAlgorithmStatus = nakedPairsAlgorithm();
+            }
+
+            if (nakedPairsAlgorithmStatus == false) {
+                return board;
+            }
+
+            /*
+            if ( singleAlgorithmTry == true
+                    && hiddenSingleAlgorithmTry == true
+                    && nakedPairsAlgorithmTry == true
+                    && lockedCandidateAlgorithmTry == true
+                    && lockedCandidateAlgorithmStatus == false) {
+
+                return board;
+            }
+            */
+
+        }
+
     }
+
 
 
 
