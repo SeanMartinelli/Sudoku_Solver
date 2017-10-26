@@ -494,6 +494,7 @@ public class SudokuSolverModel {
     public boolean lockedCandidateAlgorithm() {
 
         for (int i = 0; i < 9; ++i) {
+
            if (restrictedToColBox(i))
                return true;
            else if (restrictedToRowBox(i))
@@ -502,11 +503,13 @@ public class SudokuSolverModel {
                return true;
            else if (restrictedToBoxRow(i))
                return true;
+
         }
 
         return false;
     }
 
+    // check column, remove in box
     private boolean restrictedToColBox(int col) {
         System.out.println("restrictedToColBox");
         for (int row = 0; row < 9; ++row) {
@@ -583,6 +586,7 @@ public class SudokuSolverModel {
         return temp;
     }
 
+    // check row, remove from box
     private boolean restrictedToRowBox(int row) {
         System.out.println("restrictedToRowBox");
         for (int col = 0; col < 9; ++col) {
@@ -620,6 +624,7 @@ public class SudokuSolverModel {
         return temp;
     }
 
+    // check box, remove from column
     private boolean restrictedToBoxCol(int boxIndex) {
         System.out.println("restrictedToBoxCol " );
         Coordinates boxStart = findTopLeftByIndex(boxIndex);
