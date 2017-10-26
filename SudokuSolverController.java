@@ -1,12 +1,7 @@
 /*
     Todo:
-        -Maybe make updatePiece() in the model throw an exception instead of returning bool
-        -Finish error handling in LoadPuzzleFromFile (if invalid index is in text file)
-        -Also check to make sure there are actually 3 ints on input file line before trying to read them.
         -Dialog boxes
         -make sure bert can handle saved files with "\r\n"
-        -Hints menu
-        -Apply highlight animation to hits
         -Look into Warning about junit that pops up when first running the program
  */
 
@@ -70,20 +65,7 @@ public class SudokuSolverController {
                 while (input.hasNextLine())
                 {
                     Scanner line = new Scanner(input.nextLine());
-                    //FIXME: No such element exception
-                    int row = line.nextInt() - 1;
-                    int col = line.nextInt() - 1;
-                    int value = line.nextInt();
-
-                    Coordinates coords = new Coordinates(col, row);
-                    try {
-                        model.updatePiece(coords, value, true);
-                        view.SetOriginalPiece(coords, value);
-                    }
-                    catch (Exception e) {
-                        System.err.println("invalid: \"" + row + " " + col + " " + value + "\" " +
-                                "does not match the cell's candidate list.");
-                    }
+                    ProcessInputFileLine(line);
                 }
             }
             catch (FileNotFoundException exception) {
@@ -92,6 +74,50 @@ public class SudokuSolverController {
         }
 
         view.SetStatusLabel(""); //Clear original status label message
+    }
+
+    private void ProcessInputFileLine(Scanner line)
+    {
+        int row, col, value;
+
+        //Get row if provided
+        if(line.hasNextInt())
+            row = line.nextInt() - 1;
+        else
+            return;
+
+        //Get col if provided
+        if(line.hasNextInt())
+            col = line.nextInt() - 1;
+        else
+            return;
+
+        //Get value if provided
+        if(line.hasNextInt())
+            value = line.nextInt();
+        else
+            return;
+
+        //Make sure input is valid
+        if(row < 0 || row > 8 || col < 0 || col > 8) {
+            System.err.println("Invalid index: " + (row+1) + " " + (col+1));
+            return;
+        }
+        if(value < 1 || value > 9) {
+            System.err.println("Invalid value: " + value);
+            return;
+        }
+
+        //Add value to board
+        Coordinates coords = new Coordinates(col, row);
+        try {
+            model.updatePiece(coords, value, true);
+            view.SetOriginalPiece(coords, value);
+        }
+        catch (Exception e) {
+            System.err.println("Input \"" + (row+1) + " " + (col+1) + " "
+                    + value + "\" " + "does not match the cell's candidate list.");
+        }
     }
 
     private void SavePuzzleToFile()
@@ -199,10 +225,11 @@ public class SudokuSolverController {
                 try {
                     model.updatePiece(button.GetCoordinates(), mode, checkOnFill);
                     view.UpdatePosition(button.GetCoordinates(), mode);
-                    view.HighLightLocation(button.GetCoordinates());
                 }
                 catch (Exception exception) {
-                    //Ignore invalid piece
+                    view.SetStatusLabel(mode + " cannot be placed " +
+                            "here because it is not one of the candidates " +
+                            "for this location.");
                 }
             }
             else if(mode == 10) //Erase Mode
@@ -247,40 +274,43 @@ public class SudokuSolverController {
 
             view.SetStatusLabel("");
 
-            if (e.getActionCommand().equals("Load Puzzle"))
+            if (e.getActionCommand().equals("Load Puzzle")) {
                 LoadPuzzleFromFile();
 
-            else if (e.getActionCommand().equals("Save Puzzle"))
+            } else if (e.getActionCommand().equals("Save Puzzle")) {
                 SavePuzzleToFile();
 
-            else if (e.getActionCommand().equals("Single Algorithm")) {
+            } else if (e.getActionCommand().equals("Single Algorithm")) {
                 try {
-                    Coordinates coords = model.singleAlgorithm();
-                    view.UpdatePosition(coords, model.getPieceAt(coords));
+                    Coordinates updatedCoords = model.singleAlgorithm();
+                    view.UpdatePosition(updatedCoords, model.getPieceAt(updatedCoords));
                 } catch (Exception exception) {
-                    view.SetStatusLabel("Single algorithm could not find a piece.");
+                    view.SetStatusLabel("Single Algorithm: No piece to place");
                 }
-            }
 
-            //FIXME: Coordinates returned from hiddenSingleAlgorithm
-            else if (e.getActionCommand().equals("Hidden Single Algorithm")) {
-               //UpdateViewBoard(model.hiddenSingleAlgorithm());
+            } else if (e.getActionCommand().equals("Hidden Single Algorithm")) {
+                try {
+                    Coordinates updatedCoords = model.hiddenSingleAlgorithm();
+                    view.UpdatePosition(updatedCoords, model.getPieceAt(updatedCoords));
+                } catch (Exception exception) {
+                    view.SetStatusLabel("Hidden Single Algorithm: No piece to place");
+                }
             }
 
             //FIXME: modified for testing
             else if (e.getActionCommand().equals("Locked Candidate Algorithm")) {
                 System.out.println(model.lockedCandidateAlgorithm());
-                //java.lang.System.exit(0);
-            }
 
+            } else if (e.getActionCommand().equals("Naked Pairs Algorithm")) {
+                if(model.nakedPairsAlgorithm())
+                    view.SetStatusLabel("Naked pair found.");
+                else
+                    view.SetStatusLabel("Naked pair not found.");
 
-            //FIXME: modified for testing
-            else if (e.getActionCommand().equals("Naked Pairs Algorithm")) {
-                System.out.println(model.nakedPairsAlgorithm());
-                //java.lang.System.exit(0);
-            }
+            } else if (e.getActionCommand().equals("Fill All Possible Blank Cells")) {
+                java.lang.System.exit(0);
 
-            else if(e.getActionCommand().equals("Check On Fill")) {
+            } else if(e.getActionCommand().equals("Check On Fill")) {
                 JCheckBoxMenuItem CheckOnFillItem = (JCheckBoxMenuItem)e.getSource();
                 checkOnFill = CheckOnFillItem.getState();
 

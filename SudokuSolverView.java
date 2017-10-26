@@ -176,6 +176,7 @@ public class SudokuSolverView
     {
         try {
             buttonArray[coords.getRow()][coords.getCol()].setText(Integer.toString(value));
+            HighLightLocation(coords);
         }
         catch (ArrayIndexOutOfBoundsException exception) {
             //Don't update the board if given an invalid index
@@ -282,6 +283,15 @@ public class SudokuSolverView
         // set up Edit menu
         helpMenu = new JMenu( "Help" );
 
+        JMenuItem howToPlayItem = new JMenuItem("How To Play");
+        helpMenu.add(howToPlayItem);
+
+        JMenuItem instructionsItem = new JMenuItem("Interface Help");
+        helpMenu.add(instructionsItem);
+
+        JMenuItem authorsItem = new JMenuItem("Authors");
+        helpMenu.add(authorsItem);
+
         // set up Hint menu
         hintMenu = new JMenu( "Hint" );
         hintMenu.setMnemonic('H');
@@ -304,6 +314,10 @@ public class SudokuSolverView
         //set up New Game File menu item
         JMenuItem nakedPairsAlgoItem = new JMenuItem("Naked Pairs Algorithm");
         hintMenu.add(nakedPairsAlgoItem);
+
+        //set up New Game File menu item
+        JMenuItem fillAllPossibleItem = new JMenuItem("Fill All Possible Blank Cells");
+        hintMenu.add(fillAllPossibleItem);
 
         //Add items to the menuBar and frame
         menuBar.add(fileMenu);
