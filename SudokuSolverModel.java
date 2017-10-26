@@ -858,6 +858,7 @@ public class SudokuSolverModel {
                     for (int i = 0; i < 9; ++i) {
                         if (!listAreSame(getCandidatesAt(new Coordinates(col, i)), sameCand)) {
                             for (int a : sameCand) {
+                                System.out.println("[ " + col + ", " + i + " ]    " + "cand: " + a);
                                 candidates[col][i][a - 1] = 0;
                             }
                         }
@@ -910,8 +911,10 @@ public class SudokuSolverModel {
 
                 if (sameCand != null && availableToRemoveRow(sameCand, row)) {
                     for (int i = 0; i < 9; ++i) {
+                        // && getCandidatesAt(getCandidatesAt(new Coordinates(i, row))) > 1 ?
                         if (!listAreSame(getCandidatesAt(new Coordinates(i, row)), sameCand)) {
                             for (int a : sameCand) {
+                                System.out.println("[ " + i + ", " + row + " ]    " + "cand: " + a);
                                 candidates[i][row][a - 1] = 0;
                             }
                         }
@@ -955,9 +958,9 @@ public class SudokuSolverModel {
     private ArrayList<Integer> findSameCand(ArrayList<ArrayList<Integer>> nakedPairs){
 
         for (int i = 0; i < nakedPairs.size(); ++i) {
-            for (int k = i + 1; k < nakedPairs.size(); ++i) {
+            for (int k = i; k < nakedPairs.size(); ++k) {
 
-                if (nakedPairs.get(i) == nakedPairs.get(k)) {
+                if (( i != k) && (nakedPairs.get(i).containsAll(nakedPairs.get(k)))) {
                     return nakedPairs.get(i);
                 }
 
@@ -983,8 +986,10 @@ public class SudokuSolverModel {
                         for (int i = col; i < col + 3; ++i ) {
                             for (int k = row; k < row + 3; ++k) {
                                 if (!listAreSame(getCandidatesAt(new Coordinates(i, k)), sameCand)) {
-                                     for (int a : sameCand)
-                                        candidates[i][k][a - 1] = 0;
+                                     for (int a : sameCand) {
+                                         System.out.println("[ " + i + ", " + k + " ]    " + "cand: " + a);
+                                         candidates[i][k][a - 1] = 0;
+                                     }
                                 }
                             }
                         }
