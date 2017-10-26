@@ -14,20 +14,13 @@ public class SudokuSolverView
     private JPanel mainGrid;
     private SudokuButton[][] buttonArray;
     private JButton[] optionPanelButtons;
-    private JPanel[] subGridArray;
     private JMenu fileMenu, helpMenu, hintMenu;
     private JLabel statusLabel;
     private Timer animationTimer;
 
     SudokuSolverView()
     {
-        // Set cross-platform look and feel
-        try {
-            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-        }
-        catch (Exception e) {
-            // Just continue using default look and feel
-        }
+        SetCrossPlatformLookAndFeel();
 
         //Create new JFrame
         frame = new JFrame("Sudoku Solver");
@@ -36,138 +29,17 @@ public class SudokuSolverView
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
 
-        SetUpMenu(frame);
+        //Set up the components that make up the JFrame
+        SetUpMenu();
+        SetUpMainGrid();
+        SetUpButtonArray();
+        SetUpSubGridArray();
+        SetUpOptionPanelButtons();
+        SetUpOptionPanel();
+        SetUpStatusBar();
 
-        //Create main grid
-        mainGrid = new JPanel();
-        mainGrid.setLayout(new GridLayout(3,3,4, 3));
-        mainGrid.setPreferredSize(new Dimension(500,500));
-        mainGrid.setBackground(Color.darkGray);
-
+        //Set initial cursor to 1
         SetCursor("1.png");
-
-        subGridArray = new JPanel[9];
-        buttonArray = new SudokuButton[9][9];
-        optionPanelButtons = new JButton[11];
-
-        for(int i = 0; i < 9; ++i) {
-            for(int j = 0; j < 9; ++j)
-            {
-                buttonArray[i][j] = new SudokuButton(i, j);
-                buttonArray[i][j].setBackground(Color.white);
-                buttonArray[i][j].setForeground(Color.darkGray);
-                buttonArray[i][j].setFont(new Font("Arial", Font.PLAIN, 24));
-                buttonArray[i][j].setFocusPainted(false);
-            }
-        }
-
-        //Create sub grids
-        int rowIndex = 0;
-        int colIndex = 0;
-
-        for(int i = 0; i < 9; ++i)
-        {
-            subGridArray[i] = new JPanel();
-            subGridArray[i].setLayout(new GridLayout(3,3, 1, 1));
-            subGridArray[i].setBackground(Color.darkGray);
-
-            for(int j=rowIndex; j<rowIndex+3; ++j) {
-                for(int k=colIndex; k<colIndex+3; ++k) {
-                    subGridArray[i].add(buttonArray[j][k]);
-                }
-            }
-
-            colIndex += 3;
-            if(colIndex > 8) {
-                colIndex = 0;
-                rowIndex += 3;
-            }
-        }
-
-        for(JPanel subGrid : subGridArray)
-            mainGrid.add(subGrid);
-
-        for(int i = 0; i < 11; ++i)
-        {
-            if(i < 9) {
-                optionPanelButtons[i] = new JButton(Integer.toString(i + 1));
-
-            } else if(i == 9) {
-                optionPanelButtons[i] = new JButton();
-                optionPanelButtons[i].setActionCommand("x");
-                try { //Add image to piece
-                    Image img = ImageIO.read(getClass().getResource("Icons/eraser_white.png"));
-                    optionPanelButtons[i].setIcon(new ImageIcon(img));
-                } catch (Exception ex) {
-                    System.err.println(ex + "Cannot find: Icons/eraser_white.png");
-                }
-
-            } else if(i == 10) {
-                optionPanelButtons[i] = new JButton("?");
-            }
-
-            optionPanelButtons[i].setPreferredSize(new Dimension(40,40));
-            optionPanelButtons[i].setBackground(Color.darkGray);
-            optionPanelButtons[i].setForeground(Color.white);
-            optionPanelButtons[i].setFont(new Font("Arial", Font.BOLD, 16));
-            optionPanelButtons[i].setFocusPainted(false);
-        }
-
-        //Create optionPanel
-        JPanel optionPanel = new JPanel();
-        optionPanel.setLayout(new BorderLayout());
-        optionPanel.setBackground(Color.darkGray);
-
-        JPanel test = new JPanel();
-        test.setLayout(new GridLayout(11,1, 0, 3));
-        test.setBackground(Color.darkGray);
-
-        Box verticalBox = Box.createVerticalBox();
-        test.setPreferredSize(new Dimension(40,500));
-
-        verticalBox.add(Box.createVerticalStrut(5));
-        for(JButton button : optionPanelButtons) {
-            test.add(button);
-            verticalBox.add(Box.createVerticalGlue());
-        }
-
-        //horizontalBox.add(Box.createHorizontalStrut(13));
-        //horizontalBox.add(verticalBox);
-        //horizontalBox.add(Box.createHorizontalStrut(10));
-
-        Box topPadding = Box.createVerticalBox();
-        topPadding.setPreferredSize(new Dimension(60,10));
-
-        Box bottomPadding = Box.createVerticalBox();
-        bottomPadding.setPreferredSize(new Dimension(60,10));
-
-        Box leftPadding = Box.createHorizontalBox();
-        leftPadding.setPreferredSize(new Dimension(11,500));
-
-        Box rightPadding = Box.createHorizontalBox();
-        rightPadding.setPreferredSize(new Dimension(4,500));
-
-        optionPanel.add(topPadding, BorderLayout.NORTH);
-        optionPanel.add(bottomPadding, BorderLayout.SOUTH);
-        optionPanel.add(rightPadding, BorderLayout.EAST);
-        optionPanel.add(leftPadding, BorderLayout.WEST);
-        optionPanel.add(test, BorderLayout.CENTER);
-
-        //Create statusBar
-        JPanel statusBar = new JPanel();
-        statusBar.setLayout(new FlowLayout(FlowLayout.LEFT));
-        statusBar.setPreferredSize(new Dimension(0, 30));
-        statusBar.setBackground(Color.darkGray);
-        statusBar.setBorder(new BevelBorder(BevelBorder.LOWERED));
-
-        statusLabel = new JLabel("\"File > Load Puzzle\" to begin...");
-        statusLabel.setForeground(Color.white);
-        statusLabel.setFont(new Font("Arial", Font.BOLD, 11));
-        statusBar.add(statusLabel);
-
-        frame.add(mainGrid, BorderLayout.WEST);
-        frame.add(optionPanel, BorderLayout.EAST);
-        frame.add(statusBar, BorderLayout.SOUTH);
 
         frame.setVisible(true);
     }
@@ -256,7 +128,7 @@ public class SudokuSolverView
 
     //
     // Set up all of the components that make up the menuBar
-    private void SetUpMenu(JFrame frame)
+    private void SetUpMenu()
     {
         //Menu bar
         JMenuBar menuBar = new JMenuBar();
@@ -324,6 +196,163 @@ public class SudokuSolverView
         menuBar.add(helpMenu);
         menuBar.add(hintMenu);
         frame.setJMenuBar(menuBar);
+    }
+
+    private void SetUpMainGrid()
+    {
+        //Create main grid
+        mainGrid = new JPanel();
+        mainGrid.setLayout(new GridLayout(3,3,4, 3));
+        mainGrid.setPreferredSize(new Dimension(500,500));
+        mainGrid.setBackground(Color.darkGray);
+
+        frame.add(mainGrid, BorderLayout.WEST);
+    }
+
+    private void SetUpSubGridArray()
+    {
+        JPanel[] subGridArray = new JPanel[9];
+
+        //Create sub grids
+        int rowIndex = 0;
+        int colIndex = 0;
+
+        for(int i = 0; i < 9; ++i)
+        {
+            subGridArray[i] = new JPanel();
+            subGridArray[i].setLayout(new GridLayout(3,3, 1, 1));
+            subGridArray[i].setBackground(Color.darkGray);
+
+            for(int j=rowIndex; j<rowIndex+3; ++j)
+                for(int k=colIndex; k<colIndex+3; ++k)
+                    subGridArray[i].add(buttonArray[j][k]);
+
+            colIndex += 3;
+            if(colIndex > 8) {
+                colIndex = 0;
+                rowIndex += 3;
+            }
+        }
+
+        for(JPanel subGrid : subGridArray)
+            mainGrid.add(subGrid);
+    }
+
+    private void SetUpButtonArray()
+    {
+        buttonArray = new SudokuButton[9][9];
+
+        for(int i = 0; i < 9; ++i) {
+            for(int j = 0; j < 9; ++j)
+            {
+                buttonArray[i][j] = new SudokuButton(i, j);
+                buttonArray[i][j].setBackground(Color.white);
+                buttonArray[i][j].setForeground(Color.darkGray);
+                buttonArray[i][j].setFont(new Font("Arial", Font.PLAIN, 24));
+                buttonArray[i][j].setFocusPainted(false);
+            }
+        }
+    }
+
+    private void SetUpOptionPanelButtons()
+    {
+        optionPanelButtons = new JButton[11];
+
+        for(int i = 0; i < 11; ++i)
+        {
+            if(i < 9) {
+                optionPanelButtons[i] = new JButton(Integer.toString(i + 1));
+
+            } else if(i == 9) {
+                optionPanelButtons[i] = new JButton();
+                optionPanelButtons[i].setActionCommand("x");
+                try { //Add image to piece
+                    Image img = ImageIO.read(getClass().getResource("Icons/eraser_white.png"));
+                    optionPanelButtons[i].setIcon(new ImageIcon(img));
+                } catch (Exception ex) {
+                    System.err.println(ex + "Cannot find: Icons/eraser_white.png");
+                }
+
+            } else if(i == 10) {
+                optionPanelButtons[i] = new JButton("?");
+            }
+
+            optionPanelButtons[i].setPreferredSize(new Dimension(40,40));
+            optionPanelButtons[i].setBackground(Color.darkGray);
+            optionPanelButtons[i].setForeground(Color.white);
+            optionPanelButtons[i].setFont(new Font("Arial", Font.BOLD, 16));
+            optionPanelButtons[i].setFocusPainted(false);
+        }
+    }
+
+    private void SetUpOptionPanel()
+    {
+        //Create optionPanel
+        JPanel optionPanel = new JPanel();
+        optionPanel.setLayout(new BorderLayout());
+        optionPanel.setBackground(Color.darkGray);
+
+        JPanel OptionButtonGrid = new JPanel();
+        OptionButtonGrid.setLayout(new GridLayout(11,1, 0, 3));
+        OptionButtonGrid.setBackground(Color.darkGray);
+
+        Box verticalBox = Box.createVerticalBox();
+        OptionButtonGrid.setPreferredSize(new Dimension(40,500));
+
+        verticalBox.add(Box.createVerticalStrut(5));
+        for(JButton button : optionPanelButtons) {
+            OptionButtonGrid.add(button);
+            verticalBox.add(Box.createVerticalGlue());
+        }
+
+
+        Box topPadding = Box.createVerticalBox();
+        topPadding.setPreferredSize(new Dimension(60,10));
+
+        Box bottomPadding = Box.createVerticalBox();
+        bottomPadding.setPreferredSize(new Dimension(60,10));
+
+        Box leftPadding = Box.createHorizontalBox();
+        leftPadding.setPreferredSize(new Dimension(11,500));
+
+        Box rightPadding = Box.createHorizontalBox();
+        rightPadding.setPreferredSize(new Dimension(4,500));
+
+        optionPanel.add(topPadding, BorderLayout.NORTH);
+        optionPanel.add(bottomPadding, BorderLayout.SOUTH);
+        optionPanel.add(rightPadding, BorderLayout.EAST);
+        optionPanel.add(leftPadding, BorderLayout.WEST);
+        optionPanel.add(OptionButtonGrid, BorderLayout.CENTER);
+
+        frame.add(optionPanel, BorderLayout.EAST);
+    }
+
+    private void SetUpStatusBar()
+    {
+        //Create statusBar
+        JPanel statusBar = new JPanel();
+        statusBar.setLayout(new FlowLayout(FlowLayout.LEFT));
+        statusBar.setPreferredSize(new Dimension(0, 30));
+        statusBar.setBackground(Color.darkGray);
+        statusBar.setBorder(new BevelBorder(BevelBorder.LOWERED));
+
+        statusLabel = new JLabel("\"File > Load Puzzle\" to begin...");
+        statusLabel.setForeground(Color.white);
+        statusLabel.setFont(new Font("Arial", Font.BOLD, 11));
+        statusBar.add(statusLabel);
+
+        frame.add(statusBar, BorderLayout.SOUTH);
+    }
+
+    private void SetCrossPlatformLookAndFeel()
+    {
+        // Set cross-platform look and feel
+        try {
+            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+        }
+        catch (Exception e) {
+            // Just continue using default look and feel
+        }
     }
 
     public void UpdateBoard(int[][] newBoard)
@@ -404,6 +433,5 @@ public class SudokuSolverView
         buttonArray[coords.getRow()][coords.getCol()].setForeground(Color.white);
         animationTimer.start();
     }
-
 }
 

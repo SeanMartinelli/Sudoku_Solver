@@ -3,6 +3,8 @@
         -Dialog boxes
         -make sure bert can handle saved files with "\r\n"
         -Look into Warning about junit that pops up when first running the program
+        -break down functions if possible (save to file)
+        -comment
  */
 
 import javax.swing.*;
@@ -165,19 +167,8 @@ public class SudokuSolverController {
         }
     }
 
-    private void UpdateViewBoard(int[][] newBoard)
-    {
-        if(newBoard != null) {
-            view.UpdateBoard(newBoard);
-            CheckForWin();
-        }
-    }
-
-    // FIXME: resetBoard function available
     private void ClearBoard()
     {
-        //model.initializeBoardToZeros();
-        //model.initializeCandidatesToDefault();
         model.resetBoard();
         view.ClearBoard();
     }
