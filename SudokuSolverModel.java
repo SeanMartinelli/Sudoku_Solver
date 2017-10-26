@@ -1,16 +1,17 @@
-/**
- * Created by sean_martinelli on 10/20/17.
- */
+//
+// Michal Bochnak, Netid: mbochn2
+// Sean Martinelli, Netid: smarti58
+//
+// CS 342 Project #3 - Sudoku Solver
+// 10/26/2017
+// UIC, Pat Troy
+//
+// SudokuSolverModel.java
+//
 
-/*
-NOTES:
-    - updatePiece(): generateCandidateListWholeBoard() instead of updateCandidateList()
-        will allow to get rid of excess code - less efficient though\
-    - Erasing will mess up the candidates if Locked / Naked algorithms were used
-    - loading solved -> error
-    - should naked / locked look until value will be filled in the cell? (single)
- */
-
+//
+//
+//
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -57,14 +58,6 @@ public class SudokuSolverModel {
         return board[c.getCol()][c.getRow()];
     }
 
-    public void setBoard(int[][] board) {
-        this.board = board;
-    }
-
-    public void setCandidates(int[][][] candidates) {
-        this.candidates = candidates;
-    }
-
     public void resetBoard() {
 
         piecesOnBoard = 0;
@@ -93,9 +86,6 @@ public class SudokuSolverModel {
     public void updatePiece (Coordinates coords, int num, boolean checkOnFill)
                     throws Exception {
 
-        //if (!inBoardRange(num) || spotTaken(coords))
-        //    throw new Exception();
-        //else
         if (!checkOnFill) {
             board[coords.getCol()][coords.getRow()] = num;
             updateCandidateList(coords, num);
@@ -135,7 +125,6 @@ public class SudokuSolverModel {
         return c.getCol() >=0 && c.getCol() <= 8 && c.getRow() >=0 && c.getRow() <= 8;
     }
 
-    //FIXME: Remove listCandidate() call
     public void generateCandidateListWholeBoard() {
 
         for (int i = 0; i < 9; ++i) {
@@ -145,7 +134,6 @@ public class SudokuSolverModel {
             }
         }
 
-        listCandidates();
     }
 
     private Set<Integer> getUsedCandidates(int col, int row) {
@@ -213,7 +201,6 @@ public class SudokuSolverModel {
     }
 
     public boolean gameComplete() {
-        System.out.println(piecesOnBoard + " " + correctPiecesArrangement());
         return piecesOnBoard == 81 && correctPiecesArrangement();
     }
 
@@ -369,9 +356,6 @@ public class SudokuSolverModel {
 
     public  Coordinates singleAlgorithm() throws Exception {
 
-        System.out.println();
-        System.out.println("singleAlgorithm():");
-
         for (int i = 0; i < 9; ++i) {
             for (int k = 0; k < 9; ++k) {
 
@@ -394,11 +378,7 @@ public class SudokuSolverModel {
         throw new Exception();
     }
 
-    //FIXME: handling exc to implement resolveAll
     public Coordinates hiddenSingleAlgorithm() throws Exception {
-
-        System.out.println();
-        System.out.println("hiddenSingleAlgorithm():");
 
         Coordinates tempCoords = new Coordinates(-1, -1);
 
@@ -410,65 +390,22 @@ public class SudokuSolverModel {
                     List<Integer> tempCand = getCandidatesAt(tempCoords);
                     if (tempCand.size() > 1) {
                         for (int cand : tempCand) {
-
-
-                                if (isHiddenSingle(cand, tempCoords)) {
-                                    try {
-                                        updatePiece(tempCoords, cand, true);
-                                        return tempCoords;
-                                    } catch (Exception e) {
-                                        throw e;
-                                    }
+                            if (isHiddenSingle(cand, tempCoords)) {
+                                try {
+                                    updatePiece(tempCoords, cand, true);
+                                    return tempCoords;
+                                } catch (Exception e) {
+                                    throw e;
                                 }
-
-
+                            }
                         }
                     }
                 }
 
             }
         }
-
         throw new Exception();        // to display message about failure
     }
-
-    /* copy --
-        //FIXME: handling exc to implement resolveAll
-    public Coordinates hiddenSingleAlgorithm() throws Exception {
-
-        Coordinates tempCoords = new Coordinates(-1, -1);
-
-        for (int i = 0; i < 9; ++i) {
-            for (int k = 0; k < 9; ++k) {
-
-                if (board[i][k] == 0) {
-                    tempCoords.setColAndRow(i, k);
-                    List<Integer> tempCand = getCandidatesAt(tempCoords);
-                    if (tempCand.size() > 1) {
-                        for (int cand : tempCand) {
-
-
-                                if (isHiddenSingle(cand, tempCoords)) {
-                                    System.out.println("hiddenSingleAlgorithm");
-                                    try {
-                                        updatePiece(tempCoords, cand, true);
-                                        return tempCoords;
-                                    } catch (Exception e) {
-                                        throw e;
-                                    }
-                                }
-
-
-                        }
-                    }
-                }
-
-            }
-        }
-
-        return null;        // to display message about failure
-    }
-    */
 
     public boolean isHiddenSingle(int cand, Coordinates coords) {
 
@@ -543,12 +480,7 @@ public class SudokuSolverModel {
 
     public boolean lockedCandidateAlgorithm() {
 
-        System.out.println();
-        System.out.println("lockedCandidateAlgorithm():");
-
         for (int i = 0; i < 9; ++i) {
-
-            System.out.println();
 
            if (restrictedToColBox(i))
                return true;
@@ -557,16 +489,13 @@ public class SudokuSolverModel {
            else if (restrictedToBoxCol(i))
                return true;
            else if (restrictedToBoxRow(i))
-               return true;
-
-        }
+               return true;        }
 
         return false;
     }
 
     // check column, remove in box
     private boolean restrictedToColBox(int col) {
-        System.out.println("restrictedToColBox");
         for (int row = 0; row < 9; ++row) {
             List<Integer> myCand = getCandidatesAt(new Coordinates(col, row));
             for (int cand : myCand) {
@@ -579,8 +508,6 @@ public class SudokuSolverModel {
                             for (int k = boxStart.getRow(); k < boxStart.getRow() + 3; ++k){
                                 if (i != col ) {
                                     candidates[i][k][cand - 1] = 0;
-                                    System.out.println("cand: " + cand);
-                                    System.out.println("col: " + i + ", row " + k);
                                 }
                             }
                         }
@@ -643,7 +570,6 @@ public class SudokuSolverModel {
 
     // check row, remove from box
     private boolean restrictedToRowBox(int row) {
-        System.out.println("restrictedToRowBox");
         for (int col = 0; col < 9; ++col) {
             List<Integer> myCand = getCandidatesAt(new Coordinates(col, row));
             for (int cand : myCand) {
@@ -656,8 +582,6 @@ public class SudokuSolverModel {
                             for (int k = boxStart.getRow(); k < boxStart.getRow() + 3; ++k){
                                 if (k != row ) {
                                     candidates[i][k][cand - 1] = 0;
-                                    System.out.println("cand: " + cand);
-                                    System.out.println("col: " + i + ", row " + k);
                                 }
                             }
                         }
@@ -681,7 +605,6 @@ public class SudokuSolverModel {
 
     // check box, remove from column
     private boolean restrictedToBoxCol(int boxIndex) {
-        System.out.println("restrictedToBoxCol " );
         Coordinates boxStart = findTopLeftByIndex(boxIndex);
         for (int col = boxStart.getCol(); col < boxStart.getCol() + 3; ++col) {
             for (int row = boxStart.getRow(); row < boxStart.getRow() + 3; ++row) {
@@ -696,8 +619,6 @@ public class SudokuSolverModel {
                                             && myRow != boxStart.getRow()+2) {
 
                                     candidates[colID][myRow][cand - 1] = 0;
-                                    System.out.println("cand: " + cand);
-                                    System.out.println("col: " + colID + ", row " + myRow);
                                 }
                             }
                             return  true;
@@ -776,7 +697,6 @@ public class SudokuSolverModel {
 
     // check box, remove from row
     private boolean restrictedToBoxRow(int boxIndex) {
-        System.out.println("restrictedToBoxRow");
         Coordinates boxStart = findTopLeftByIndex(boxIndex);
         for (int col = boxStart.getCol(); col < boxStart.getCol() + 3; ++col) {
             for (int row = boxStart.getRow(); row < boxStart.getRow() + 3; ++row) {
@@ -791,8 +711,6 @@ public class SudokuSolverModel {
                                         && myCol != boxStart.getCol()+2) {
 
                                     candidates[myCol][rowID][cand - 1] = 0;
-                                    System.out.println("cand: " + cand);
-                                    System.out.println("col: " + myCol + ", row " + rowID);
                                 }
                             }
                             return  true;
@@ -838,16 +756,11 @@ public class SudokuSolverModel {
 
     public boolean nakedPairsAlgorithm() {
 
-        System.out.println();
-        System.out.println("nakedPairsAlgorithm():");
-
         return nakedPairsCheckColumns() || nakedPairsCheckRows() || nakedPairsCheckBoxes();
     }
 
     //FIXME: remove print statement
     private boolean nakedPairsCheckColumns() {
-
-        System.out.println("Columns");
 
         for (int col = 0; col < 9; ++col) {
             ArrayList<ArrayList<Integer>> nakedPairs = getColCandWithLengthOf(2, col);
@@ -858,7 +771,6 @@ public class SudokuSolverModel {
                     for (int i = 0; i < 9; ++i) {
                         if (!listAreSame(getCandidatesAt(new Coordinates(col, i)), sameCand)) {
                             for (int a : sameCand) {
-                                System.out.println("[ " + col + ", " + i + " ]    " + "cand: " + a);
                                 candidates[col][i][a - 1] = 0;
                             }
                         }
@@ -902,8 +814,6 @@ public class SudokuSolverModel {
     //FIXME: remove print statement
     private boolean nakedPairsCheckRows() {
 
-        System.out.println("Rows");
-
         for (int row = 0; row < 9; ++row) {
             ArrayList<ArrayList<Integer>> nakedPairs = getRowCandWithLengthOf(2, row);
             if (nakedPairs.size() > 1) {
@@ -914,7 +824,6 @@ public class SudokuSolverModel {
                         // && getCandidatesAt(getCandidatesAt(new Coordinates(i, row))) > 1 ?
                         if (!listAreSame(getCandidatesAt(new Coordinates(i, row)), sameCand)) {
                             for (int a : sameCand) {
-                                System.out.println("[ " + i + ", " + row + " ]    " + "cand: " + a);
                                 candidates[i][row][a - 1] = 0;
                             }
                         }
@@ -973,8 +882,6 @@ public class SudokuSolverModel {
     //FIXME: remove print statement
     private boolean nakedPairsCheckBoxes() {
 
-        System.out.println("Boxes");
-
         for (int col = 0; col <= 6; col+=3 ) {
             for (int row = 0; row <= 6; row += 3) {
                 ArrayList<ArrayList<Integer>> nakedPairs =
@@ -987,7 +894,6 @@ public class SudokuSolverModel {
                             for (int k = row; k < row + 3; ++k) {
                                 if (!listAreSame(getCandidatesAt(new Coordinates(i, k)), sameCand)) {
                                      for (int a : sameCand) {
-                                         System.out.println("[ " + i + ", " + k + " ]    " + "cand: " + a);
                                          candidates[i][k][a - 1] = 0;
                                      }
                                 }
@@ -1059,7 +965,6 @@ public class SudokuSolverModel {
         return count;
     }
 
-    //FIXME: Implement
     public int [][] resolveAllPossibleCells() {
 
         while (true) {
@@ -1095,20 +1000,7 @@ public class SudokuSolverModel {
             if (nakedPairsAlgorithmStatus == false) {
                 return board;
             }
-
-            /*
-            if ( singleAlgorithmTry == true
-                    && hiddenSingleAlgorithmTry == true
-                    && nakedPairsAlgorithmTry == true
-                    && lockedCandidateAlgorithmTry == true
-                    && lockedCandidateAlgorithmStatus == false) {
-
-                return board;
-            }
-            */
-
         }
-
     }
 
 
