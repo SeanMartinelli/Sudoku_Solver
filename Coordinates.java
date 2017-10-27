@@ -1,10 +1,21 @@
-/**
- * Created by Michal on 10/20/2017.
- */
+//
+// Michal Bochnak, Netid: mbochn2
+// Sean Martinelli, Netid: smarti58
+//
+// CS 342 Project #3 - Sudoku Solver
+// 10/26/2017
+// UIC, Pat Troy
+//
+// Coordinates.java
+//
+
+//
+// Includes coordinates for the positions on the game board
+//
 
 public class Coordinates {
 
-    private int row, col;
+    private int col, row;
 
     Coordinates(int x, int y) {
         col = x;
@@ -18,14 +29,6 @@ public class Coordinates {
 
     public int getCol() {
         return col;
-    }
-
-    public void setRow(int row) {
-        this.row = row;
-    }
-
-    public void setCol(int col) {
-        this.col = col;
     }
 
     public void setColAndRow(int x, int y) {

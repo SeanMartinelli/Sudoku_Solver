@@ -1,6 +1,17 @@
-/**
- * Created by Michal on 10/21/2017.
- */
+//
+// Michal Bochnak, Netid: mbochn2
+// Sean Martinelli, Netid: smarti58
+//
+// CS 342 Project #3 - Sudoku Solver
+// 10/26/2017
+// UIC, Pat Troy
+//
+// SudokuButton.java
+//
+
+//
+//
+//
 
 import javax.swing.*;
 
