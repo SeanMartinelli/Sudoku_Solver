@@ -10,7 +10,8 @@
 //
 
 //
-//
+// Model class is responsible for handling all the data manipulation that is
+// used in the program. It contains data structures
 //
 
 import java.util.ArrayList;
@@ -627,7 +628,7 @@ public class SudokuSolverModel {
     // traverses the column and counts the number of occurrences of given
     // candidate in the given column
     private List<Integer> findOccuranceIndecesInCol(int col, int cand) {
-        List<Integer> temp = new ArrayList<>();
+        List<Integer> temp = new ArrayList<Integer>();
         for (int row = 0; row < 9; ++row) {
             if (getCandidatesAt(new Coordinates(col, row)).contains(cand)) {
                 temp.add(row);

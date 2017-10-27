@@ -443,9 +443,11 @@ public class SudokuSolverController {
     private String GenerateAuthorMessage()
     {
         return "Michal Bochnak\n" +
-                "Netid: mbochnak2 \n\n" +
+                "Netid: mbochn2 \n\n" +
                 "Sean Martinelli\n" +
-                "Netid: smarti58";
+                "Netid: smarti58\n\n" +
+                "CS 342 Project #3 - Sudoku Solver\n" +
+                "Date: Oct 26, 2017";
     }
 
     private String GenerateInterfaceHelpMessage()
