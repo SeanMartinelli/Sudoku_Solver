@@ -10,14 +10,8 @@
 //
 
 //
+// Handles interactions between the View and the Model
 //
-//
-
-
-/*
-    Todo:
-        -make sure bert can handle saved files with "\r\n"
- */
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
