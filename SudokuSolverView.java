@@ -224,6 +224,19 @@ public class SudokuSolverView
         }
     }
 
+    public void SetPieceBackgroundColor(Coordinates coords, Color color)
+    {
+        if(buttonArray[coords.getRow()][coords.getCol()].getText().equals(""))
+            buttonArray[coords.getRow()][coords.getCol()].setBackground(color);
+    }
+
+    public void ResetGridBackgroundColor()
+    {
+        for(int i = 0; i < buttonArray.length; ++i)
+            for(int j = 0; j < buttonArray[i].length; ++j)
+                buttonArray[i][j].setBackground(Color.white);
+    }
+
     //
     // Set up all of the components that make up the menuBar
     //

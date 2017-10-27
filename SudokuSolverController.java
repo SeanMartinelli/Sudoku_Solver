@@ -15,6 +15,7 @@
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -263,6 +264,7 @@ public class SudokuSolverController {
             SudokuButton button = (SudokuButton)e.getSource();
 
             view.SetStatusLabel(""); //Clear old status message
+            view.ResetGridBackgroundColor(); //Reset background color to white
 
             //Make sure the button the user clicked is editable
             if(!button.IsEditable())
@@ -290,6 +292,7 @@ public class SudokuSolverController {
             {
                 List<Integer> candidateList = model.getCandidatesAt(button.GetCoordinates());
                 view.SetStatusLabel(CreateCandidatesMessage(candidateList));
+                view.SetPieceBackgroundColor(button.GetCoordinates(), new Color(255,25,25));
             }
 
             CheckForWin();
@@ -331,6 +334,7 @@ public class SudokuSolverController {
         public void actionPerformed(ActionEvent e) {
 
             view.SetStatusLabel(""); //Reset status label
+            view.ResetGridBackgroundColor(); //Reset background color to white
 
             //pass ActionEvent to individual menu handlers
             FileMenuHandler(e);
