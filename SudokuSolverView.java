@@ -10,7 +10,9 @@
 //
 
 //
-//
+// This class is the interface between the user and the program.
+// It is responsible for displaying all of the information to the user
+// and receiving user input.
 //
 
 import javax.imageio.ImageIO;
@@ -518,7 +520,7 @@ public class SudokuSolverView
     // Highlight the specified location on the board. The highlight fades back
     // to the normal look of a button over a short period of time.
     //
-    private void HighLightLocation(Coordinates coords)
+    private void HighLightLocation(final Coordinates coords)
     {
         //If a timer is running make sure not to start another one
         if(animationTimer != null && animationTimer.isRunning())
