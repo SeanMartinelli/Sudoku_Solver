@@ -22,9 +22,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-/**
- * Created by sean on 10/16/2017.
- */
 public class SudokuSolverView
 {
     private JFrame frame;

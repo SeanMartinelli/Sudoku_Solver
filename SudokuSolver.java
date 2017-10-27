@@ -10,7 +10,8 @@
 //
 
 //
-//
+// Creates new sudoku solver model and sudoku solver view
+// and pass it to the controller along with the command line arguments
 //
 
 public class SudokuSolver

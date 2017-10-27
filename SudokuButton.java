@@ -10,7 +10,8 @@
 //
 
 //
-//
+// Extension of the JButton class to allow the button position
+// on the board to be identifiable
 //
 
 import javax.swing.*;

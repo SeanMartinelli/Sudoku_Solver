@@ -96,7 +96,8 @@ public class SudokuSolverController {
             }
         }
         catch (FileNotFoundException exception) {
-            System.err.println("File not found." + exception.toString());
+            System.err.println("File not found. Cannot load file specified by " +
+                                                 "command line argument.");
         }
     }
 

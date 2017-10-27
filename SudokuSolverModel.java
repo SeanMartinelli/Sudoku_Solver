@@ -11,7 +11,10 @@
 
 //
 // Model class is responsible for handling all the data manipulation that is
-// used in the program. It contains data structures
+// used in the program. It contains data structures that keeps track of the
+// actually on the board. It keeps track of the candidates list
+// and performs all the job requested by model. It implements
+// the algorithms that are to help user to solve the sudoku puzzles.
 //
 
 import java.util.ArrayList;
@@ -640,7 +643,7 @@ public class SudokuSolverModel {
     // traverses the row and counts the number of occurrences of given
     // candidate in the given row
     private List<Integer> findOccuranceIndecesInRow(int row, int cand) {
-        List<Integer> temp = new ArrayList<>();
+        List<Integer> temp = new ArrayList<Integer>();
         for (int col = 0; col < 9; ++col) {
             if (getCandidatesAt(new Coordinates(col, row)).contains(cand)) {
                 temp.add(col);
