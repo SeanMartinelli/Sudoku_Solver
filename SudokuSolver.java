@@ -6,8 +6,6 @@ public class SudokuSolver
         SudokuSolverModel sudokuSolverModel = new SudokuSolverModel();
         SudokuSolverView sudokuSolverView = new SudokuSolverView();
 
-        SudokuSolverController sudokuSolverController =
-                new SudokuSolverController(sudokuSolverModel, sudokuSolverView);
-
+        new SudokuSolverController(sudokuSolverModel, sudokuSolverView, args);
     }
 }
