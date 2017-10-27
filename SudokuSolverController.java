@@ -312,8 +312,6 @@ public class SudokuSolverController {
                     view.SetStatusLabel("Locked candidate not found.");
 
             } else if (e.getActionCommand().equals("Naked Pairs Algorithm")) {
-                //FIXME: remove listCandidates()
-                model.listCandidates();
                 if(model.nakedPairsAlgorithm())
                     view.SetStatusLabel("Naked pair found.");
                 else
